@@ -1,0 +1,27 @@
+.right_sidebar nav{
+  ul{
+    padding: 0;
+    margin: 0;
+    li{
+      list-style-type: none;
+      margin-bottom: 10px;
+      &.nav_right_active{
+        a{
+          color: #303030;
+        }
+      }
+      a{
+        display: block;
+        background-color: #fff;
+        padding: 10px 20px;
+        font-size: 14px;
+        color: #888888;
+        font-weight: bold;
+        &:hover{
+          text-decoration: none;
+          color: #1605e8;
+        }
+      }
+    }
+  }
+}

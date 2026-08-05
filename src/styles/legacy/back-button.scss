@@ -1,0 +1,34 @@
+.button-back{
+  font-family: 'Arial', sans-serif;
+  font-size: 15px;
+  color: #ccc;
+  font-weight: bold;
+  text-align: center;
+  display: block;
+  position: sticky;
+  top: 0;
+  width: 100%;
+  border: none;
+  background-color: transparent;
+  vertical-align: top;
+  height: calc(100vh - 185px);
+  transition: all .5s ease;
+  padding-top: 20px;
+  cursor: pointer;
+  &:hover{
+    color: #888888;
+    text-decoration: none;
+    svg{
+      color: #888888;
+      fill: #888888;
+    }
+  }
+  svg{
+    height: 15px;
+    margin-top: -2px;
+    margin-right: 10px;
+    color: #ccc;
+    fill: #ccc;
+    transition: all .5s ease;
+  }
+}

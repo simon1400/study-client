@@ -1,0 +1,40 @@
+.select-program-modal{
+  .uk-modal-dialog{
+    overflow: auto;
+  }
+  .uk-modal-header{
+    background-color: transparent;
+    padding: 20px 30px;
+    .uk-modal-title{
+      font-size: 14px;
+      font-weight: lighter;
+      text-transform: uppercase;
+      color: #303030;
+      letter-spacing: 1px;
+    }
+  }
+  .uk-modal-close-default{
+    transform: scale(1.5);
+    top: 17px;
+    right: 20px;
+  }
+  h4{
+    font-weight: bold;
+  }
+  .uk-leader{
+    font-size: 15px;
+    + div{
+      font-size: 15px;
+    }
+  }
+  label{
+    cursor: pointer;
+    input{
+      margin-right: 10px;
+    }
+  }
+}
+
+.uk-modal-footer{
+  background-color: transparent;
+}

@@ -1,0 +1,214 @@
+@media(max-width: 1200px){
+  .panel_item.basic_info_panel span{
+    text-align: left!important;
+  }
+  .basic_info_panel{
+    .uk-grid-margin{
+      margin-top: 0!important;
+    }
+  }
+  .right_sidebar{
+    min-width: 230px;
+  }
+}
+
+@media(max-width: 1122px){
+  header .button-accent{
+    margin-top: 20px;
+  }
+  header .logo{
+    width: 100%;
+    text-align: center;
+  }
+  header .header-top .menu-top{
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media(max-width: 940px){
+  .footer-top ul{
+    margin-bottom: 35px!important;
+    .footer-head{
+      margin-bottom: 10px!important;
+    }
+  }
+  .program-timeline-wrap>ul{
+    padding-left: 0;
+    justify-content: center;
+  }
+}
+
+@media(max-width: 846px){
+  header .logo{
+    margin-bottom: 20px!important;
+  }
+}
+
+@media(max-width: 800px){
+  .userArea{
+    > .uk-container > .uk-flex{
+      flex-wrap: wrap;
+    }
+  }
+  .personal_sidebar{
+    display: none;
+  }
+}
+
+@media (max-width: 640px){
+  .short-footer.program-full-footer{
+    p {
+      font-size: 17px;
+      strong{
+        font-size: 20px;
+      }
+      span{
+        font-size: 13px;
+      }
+    }
+
+    .button{
+      max-width: 100%;
+      width: 100%;
+    }
+  }
+  .program-item-hours.full-program-hours{
+    >div{
+      flex-wrap: wrap;
+      >div{
+        width: 100%;
+      }
+    }
+  }
+  header .logo{
+    margin-bottom: 0px!important;
+    text-align: left;
+    width: auto;
+    img{
+      height: 33px;
+    }
+  }
+  .content_panel{
+    margin-top: 20px;
+  }
+  .sidebar_wrap{
+    width: 100%!important;
+    margin-right: 0!important;
+  }
+  #modal-registration .uk-flex{
+    display: block!important;
+  }
+  #modal-registration .reg_wrap{
+    display: flex!important;
+  }
+  .program-timeline-wrap>ul{
+    flex-direction: column;
+  }
+  .program-timeline-wrap>ul li:not(:last-child){
+    margin-right: 0;
+  }
+  .hamburger:hover{
+    opacity: 1!important;
+  }
+  .last-short-item{
+    max-width: 100%;
+  }
+  .section-offers{
+    .section-head-wrap{
+      margin-bottom: 100px;
+    }
+  }
+  .section-steps{
+    padding-bottom: 120px;
+    .button{
+      margin-left: 25px;
+    }
+  }
+  .uni-info-top-img h2{
+    font-size: 25px;
+    letter-spacing: 2px;
+  }
+  .uni-faculty-wrap>ul{
+    column-count: 1;
+    padding: 10px;
+    padding-left: 10px;
+  }
+  .uni-faculty-wrap ul li{
+    padding-left: 20px!important;
+  }
+  .contacts-info-item span{
+    margin-bottom: 10px!important;
+  }
+  .uni-faculty-wrap ul li:before{
+    left: 5px;
+  }
+  .section-slide .slide-gradient{
+    background-image: none;
+    background-color: rgba(black, .4);
+  }
+  footer .footer-top{
+    padding-bottom: 0;
+  }
+  .top-img-with-gallary{
+    height: 500px;
+  }
+  .partners-item{
+    margin-bottom: 20px!important;
+  }
+  .galery-item{
+    border-bottom: none;
+  }
+  .section-contact form input{
+    width: 100%!important;
+  }
+  .cd-timeline__container{
+    margin-left: 30px;
+    margin-top: 50px!important;
+    width: 83%;
+    padding-top: 0;
+    padding-bottom: 65px;
+    .cd-timeline__block:not(:first-child){
+      margin-top: 50px;
+    }
+  }
+  header .header-top .menu-top ul li{
+    text-align: right;
+  }
+  .header-hamburger.hamburger.is-active{
+    position: fixed;
+    z-index: 1000;
+  }
+  .full-program-image{
+    h2{
+      text-align: center;
+    }
+  }
+
+  .sidebar{
+    margin-top: 20px;
+  }
+  .menu-top{
+    position: absolute;
+    .nav_active{
+      a{
+        color: #1605e8!important;
+        span:after{
+          background-color: #1605e8!important;
+        }
+      }
+    }
+  }
+  .mobile-mnu-is-active{
+    overflow: scroll;
+    max-height: 100vh;
+    position: fixed;
+    li:last-child{
+      padding-right: 15px;
+    }
+    .button.button-accent{
+      padding-right: 15px;
+      border-radius: 0;
+    }
+  }
+}

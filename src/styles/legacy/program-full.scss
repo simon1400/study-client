@@ -1,0 +1,28 @@
+.program-timeline-wrap{
+  > ul.uk-tab{
+    a{
+      text-transform: none;
+      font-weight: bold;
+    }
+  }
+  .program-timeline-item{
+    list-style-type: none;
+    > ul:first-child{
+      padding-left: 0;
+      margin-left: 0;
+      > li{
+        list-style-type: none;
+      }
+    }
+  }
+}
+
+
+
+.full-program-head{
+  border-bottom: 1px solid #ccc;
+  padding-bottom: 20px;
+  h1{
+    margin-bottom: 0;
+  }
+}

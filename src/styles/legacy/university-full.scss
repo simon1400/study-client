@@ -1,0 +1,17 @@
+.uni-info-top-img{
+  h2{
+    font-size: 30px;
+    letter-spacing: 2px;
+  }
+}
+
+.uni-faculty-wrap>ul{
+  padding: 40px;
+  padding-left: 10px;
+}
+
+.uni-faculty-wrap ul li{
+  padding-left: 40px;
+  column-break-inside: avoid;
+  page-break-inside: avoid;
+}

@@ -1,0 +1,74 @@
+$blue: #1605e8;
+
+.map{
+  .button-map{
+    img{
+      height: 25px;
+      display: inline-block;
+      vertical-align: middle;
+      margin-left: 10px;
+      margin-top: -3px;
+    }
+  }
+  .map-wrap{
+    display: block;
+    transition: all .5s ease;
+    height: 0;
+    iframe{
+      margin-top: -48px;
+    }
+    &.show-map{
+      height: 400px;
+    }
+  }
+}
+
+.tm-call-danger{
+  position: relative;
+  display: block;
+  width: 300px;
+  text-align: center;
+  span{
+    position: absolute;
+    top: 20px;
+    left: 0;
+  }
+}
+
+.media-head{
+  margin-bottom: 0!important;
+  margin-top: 0!important;
+}
+
+.tag-photo, .tag-video{
+  .uk-overlay-primary{
+    background: linear-gradient(to top, black 0%, rgba(black, .5) 20%, transparent 100%);
+  }
+}
+
+.offers-item .button{
+  text-align: left;
+  padding-left: 20px;
+  padding-right: 20px;
+  color: $blue;
+  border-color: $blue;
+  &:hover{
+    background-color: $blue;
+    color: white;
+  }
+}
+
+// .section-offers .uk-grid > div {
+//
+//   @for $i from 0 to $num-colors {
+//     &:nth-child(#{$i}) .offers-item .button {
+//       $color: rgb(random(255), random(255), random(255));
+//       border-color: $color;
+//       color: $color;
+//       &:hover{
+//         background-color: $color;
+//         color: white;
+//       }
+//     }
+//   }
+// }

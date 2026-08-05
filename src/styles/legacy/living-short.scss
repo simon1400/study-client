@@ -1,0 +1,16 @@
+.dotnav-custom{
+  margin: 0;
+  padding-left: 15px;
+  padding-right: 15px;
+  padding-top: 30px;
+  width: 100%;
+  max-width: 100%;
+  background-image: linear-gradient(to top, rgba(black, .8), transparent);
+  .uk-dotnav{
+    margin-left: 0!important;
+    justify-content: center;
+    li{
+      margin-bottom: 15px;
+    }
+  }
+}

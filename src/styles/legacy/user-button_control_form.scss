@@ -1,0 +1,24 @@
+.button_control_wrap{
+  max-width: 260px;
+  &.button_count > div > div:last-child{
+    text-align: right;
+  }
+}
+
+.button_add_item{
+  color: #6c88d1;
+  font-size: 14px;
+  font-weight: bold;
+  background-color: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+.button_remove_item{
+  color: #999999;
+  font-size: 14px;
+  background-color: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}

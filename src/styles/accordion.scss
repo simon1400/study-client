@@ -1,0 +1,14 @@
+// Замена react-animate-height для FAQ и доп. услуг.
+.uslug-collapse {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.5s ease;
+
+  > div {
+    overflow: hidden;
+  }
+
+  &.is-open {
+    grid-template-rows: 1fr;
+  }
+}
