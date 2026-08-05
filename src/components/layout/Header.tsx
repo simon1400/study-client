@@ -4,9 +4,7 @@ import { getCollection, getSingle } from '@/lib/strapi';
 import { strapiLocale } from '@/i18n/routing';
 import type { Global, Menu } from '@/types/strapi';
 import HeaderNav from './HeaderNav';
-
-// TODO (этап 5): блок авторизации — «Войти», выпадашка личного кабинета,
-// модалки регистрации/пароля. Публичные страницы этапа 4 их не используют.
+import HeaderAuth from '@/components/auth/HeaderAuth';
 
 export default async function Header({ locale }: { locale: string }) {
   const strapi = strapiLocale(locale);
@@ -49,6 +47,9 @@ export default async function Header({ locale }: { locale: string }) {
                   {contacts.email}
                 </a>
               ) : null}
+            </div>
+            <div className="uk-text-right uk-width-1-3@s">
+              <HeaderAuth />
             </div>
           </div>
         </div>

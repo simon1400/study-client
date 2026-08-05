@@ -107,7 +107,10 @@ export default async function UniversityPage({ params }: { params: Promise<Param
                       </ul>
                     </div>
                     <div className="content-footer uk-text-right">
-                      <a href="mailto:info@studycz.cz">Задать вопрос</a>
+                      <a href="mailto:info@studycz.cz">Задать вопрос</a> или{' '}
+                      <a href="#modal-registration" uk-toggle="" className="button button-accent">
+                        Заполнить анкету
+                      </a>
                     </div>
                   </div>
                 ) : null}

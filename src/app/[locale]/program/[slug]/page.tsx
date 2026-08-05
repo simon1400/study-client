@@ -157,6 +157,11 @@ export default async function ProgramPage({ params }: { params: Promise<Params> 
                         </p>
                       </div>
                     </div>
+                    <div className="uk-text-right@s">
+                      <a href="#modal-registration" className="button button-accent" uk-toggle="">
+                        Заполнить анкету
+                      </a>
+                    </div>
                   </div>
                 </div>
               </div>

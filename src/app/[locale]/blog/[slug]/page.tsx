@@ -71,7 +71,10 @@ export default async function BlogPage({ params }: { params: Promise<Params> }) 
 
                 {article.showOnBlog ? (
                   <div className="content-footer uk-text-center uk-text-right@s">
-                    <a href="mailto:info@studycz.cz">Задать вопрос</a>
+                    <a href="mailto:info@studycz.cz">Задать вопрос</a> или{' '}
+                    <a href="#modal-registration" uk-toggle="" className="button button-accent">
+                      Заполнить анкету
+                    </a>
                   </div>
                 ) : null}
               </div>

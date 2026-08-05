@@ -78,7 +78,10 @@ export default async function LivingPage({ params }: { params: Promise<Params> }
                   ) : null}
                 </div>
                 <div className="content-footer uk-text-center uk-text-right@s">
-                  <a href="mailto:info@studycz.cz">Задать вопрос</a>
+                  <a href="mailto:info@studycz.cz">Задать вопрос</a> или{' '}
+                  <a href="#modal-registration" uk-toggle="" className="button button-accent">
+                    Заполнить анкету
+                  </a>
                 </div>
               </div>
             </div>

@@ -16,6 +16,11 @@ declare module 'react' {
     'uk-filter-control'?: string;
     'uk-grid'?: string;
     'uk-height-match'?: string;
+    'uk-form-custom'?: string;
+    'uk-icon'?: string;
+    'uk-leader'?: string;
+    'uk-modal'?: string;
+    'uk-overflow-auto'?: string;
     'uk-scrollspy'?: string;
     'uk-switcher'?: string;
     'uk-lightbox'?: string;

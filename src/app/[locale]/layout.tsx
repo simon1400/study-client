@@ -9,6 +9,8 @@ import type { Global } from '@/types/strapi';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import UikitInit from '@/components/UikitInit';
+import SessionProvider from '@/components/auth/SessionProvider';
+import AuthModals from '@/components/auth/AuthModals';
 
 // порядок как на старом сайте: UIkit из CDN в index.html, затем бандл app.css
 // (тема + свой UIkit) и правки поверх
@@ -82,10 +84,13 @@ export default async function LocaleLayout({
         </noscript>
 
         <NextIntlClientProvider>
-          <UikitInit />
-          <Header locale={locale} />
-          {children}
-          <Footer locale={locale} />
+          <SessionProvider>
+            <UikitInit />
+            <Header locale={locale} />
+            {children}
+            <Footer locale={locale} />
+            <AuthModals />
+          </SessionProvider>
         </NextIntlClientProvider>
 
         <Script id="gtm" strategy="afterInteractive">

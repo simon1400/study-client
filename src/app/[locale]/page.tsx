@@ -139,6 +139,12 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
             </div>
           ))}
         </div>
+
+        <div className="uk-text-center@s">
+          <a href="#modal-registration" uk-toggle="" className="button button-accent">
+            Заполнить анкету
+          </a>
+        </div>
       </section>
 
       {/* Секция «Наша медиатека» тянула ленту через устаревший Instagram API v1;
