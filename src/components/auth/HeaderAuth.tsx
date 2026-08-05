@@ -89,6 +89,10 @@ export default function HeaderAuth() {
             <a href="#modal-registration" uk-toggle="">
               заполнить анкету
             </a>
+            <br />
+            <a href="#modal-forgot" uk-toggle="">
+              Забыли пароль?
+            </a>
           </p>
         </form>
         <button type="submit" form="login" className="button button-blue" disabled={login.loading}>

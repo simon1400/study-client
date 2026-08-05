@@ -70,6 +70,10 @@ export default function LoginModal() {
                     <a href="#modal-registration" uk-toggle="">
                       заполнить анкету
                     </a>
+                    <br />
+                    <a href="#modal-forgot" uk-toggle="">
+                      Забыли пароль?
+                    </a>
                   </p>
                 </form>
               </div>

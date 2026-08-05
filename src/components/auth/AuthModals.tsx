@@ -6,6 +6,7 @@ import LoginModal from '@/components/modals/LoginModal';
 import RegistrationModal from '@/components/modals/RegistrationModal';
 import RegDoneModal from '@/components/modals/RegDoneModal';
 import PasswordModal from '@/components/modals/PasswordModal';
+import ForgotPasswordModal from '@/components/modals/ForgotPasswordModal';
 
 /**
  * Модалки авторизации, общие для всего сайта: гостю — вход и регистрация,
@@ -23,6 +24,7 @@ export default function AuthModals() {
   return (
     <>
       <LoginModal />
+      <ForgotPasswordModal />
       <RegistrationModal onDone={setPassword} />
       <RegDoneModal password={password} />
     </>
