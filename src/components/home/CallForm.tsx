@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { pushEvent } from '@/lib/analytics';
 import '@/styles/legacy/modal-done.scss';
 
 type Errors = { name?: boolean; phone?: boolean; send?: boolean };
@@ -33,6 +34,7 @@ export default function CallForm() {
         body: JSON.stringify({ name, phone, time: formatNow() }),
       });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      pushEvent('call_request');
       setName('');
       setPhone('');
       setDone(true);

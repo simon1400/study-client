@@ -11,13 +11,12 @@
   p{
     margin-bottom: 0;
   }
-  .close-gdpr{
-    margin-left: 20px;
-    margin-top: -5px;
+  .gdpr-actions{
     display: inline-block;
-    svg{
-      width: 20px;
-      height: 20px;
+    margin-left: 20px;
+    white-space: nowrap;
+    button + button{
+      margin-left: 10px;
     }
   }
 }

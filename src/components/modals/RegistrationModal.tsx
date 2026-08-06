@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import country from '@/data/country.json';
 import month from '@/data/month.json';
+import { pushEvent } from '@/lib/analytics';
 import { hideModal, showModal } from '@/lib/uikit';
 import Preloader from '@/components/Preloader';
 import ModalPortal from './ModalPortal';
@@ -69,6 +70,7 @@ export default function RegistrationModal({ onDone }: { onDone: (password: strin
         return;
       }
 
+      pushEvent('registration');
       onDone(data.password ?? '');
       hideModal('#modal-registration');
       showModal('#modal-done');

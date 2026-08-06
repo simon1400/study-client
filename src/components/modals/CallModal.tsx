@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import DoneModal from './DoneModal';
+import { pushEvent } from '@/lib/analytics';
 import { hideModal, showModal } from '@/lib/uikit';
 import ModalPortal from './ModalPortal';
 
@@ -45,6 +46,7 @@ export default function CallModal() {
       });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
+      pushEvent('call_request');
       setForm({ name: '', phone: '' });
       hideModal('#modal-call');
       showModal('#modal-call-done');

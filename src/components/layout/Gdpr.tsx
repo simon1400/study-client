@@ -2,33 +2,36 @@
 
 import { useEffect, useState } from 'react';
 import { Link } from '@/i18n/navigation';
+import { saveConsent, storedConsent } from '@/lib/analytics';
 import '@/styles/legacy/gdpr.scss';
 
 export default function Gdpr() {
   // до чтения localStorage баннер не показываем, чтобы не мигал при гидрации
-  const [agree, setAgree] = useState(true);
+  const [visible, setVisible] = useState(false);
 
   useEffect(() => {
-    if (!localStorage.getItem('agree_gdpr')) setAgree(false);
+    if (storedConsent() === null) setVisible(true);
   }, []);
 
-  if (agree) return null;
+  if (!visible) return null;
+
+  function decide(granted: boolean) {
+    saveConsent(granted);
+    setVisible(false);
+  }
 
   return (
     <div className="gdpr">
       <p>
-        На нашем сайте используются файлы cookies. Оставаясь на сайте, Вы соглашаетесь с их
-        использованием. <Link href="/blog/cookies">Подробнее</Link>
-        <button
-          className="close-gdpr"
-          type="button"
-          uk-close=""
-          aria-label="Закрыть"
-          onClick={() => {
-            localStorage.setItem('agree_gdpr', 'true');
-            setAgree(true);
-          }}
-        />
+        На нашем сайте используются файлы cookies. <Link href="/blog/cookies">Подробнее</Link>
+        <span className="gdpr-actions">
+          <button className="uk-button uk-button-primary uk-button-small" type="button" onClick={() => decide(true)}>
+            Принять
+          </button>
+          <button className="uk-button uk-button-default uk-button-small" type="button" onClick={() => decide(false)}>
+            Отказаться
+          </button>
+        </span>
       </p>
     </div>
   );

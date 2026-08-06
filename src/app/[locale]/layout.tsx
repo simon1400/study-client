@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import Script from 'next/script';
+import { GoogleTagManager } from '@next/third-parties/google';
 import { notFound } from 'next/navigation';
 import { hasLocale, NextIntlClientProvider } from 'next-intl';
 import { setRequestLocale } from 'next-intl/server';
@@ -9,6 +9,7 @@ import type { Global } from '@/types/strapi';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import UikitInit from '@/components/UikitInit';
+import YandexMetrika from '@/components/YandexMetrika';
 import SessionProvider from '@/components/auth/SessionProvider';
 import AuthModals from '@/components/auth/AuthModals';
 
@@ -20,7 +21,14 @@ import '@/styles/style.scss';
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://studycz.cz';
 const GTM_ID = 'GTM-M3HKN8D';
-const YANDEX_METRIKA_ID = 53724796;
+
+// Consent mode v2: default denied для всех сигналов ДО загрузки GTM (инлайн — первым
+// в body, GTM грузится afterInteractive и гарантированно позже). Если посетитель уже
+// согласился раньше (localStorage agree_gdpr=true — ключ старого баннера), сразу granted.
+// Update по клику — в src/lib/analytics.ts.
+const CONSENT_DEFAULT_JS = `window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}
+var g='denied';try{if(localStorage.getItem('agree_gdpr')==='true')g='granted'}catch(e){}
+gtag('consent','default',{ad_storage:g,ad_user_data:g,ad_personalization:g,analytics_storage:g});`;
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
@@ -74,6 +82,9 @@ export default async function LocaleLayout({
     <html lang={locale}>
       <body>
         {/* Google Tag Manager и Яндекс.Метрика — те же счётчики, что в старом public/index.html */}
+        <script dangerouslySetInnerHTML={{ __html: CONSENT_DEFAULT_JS }} />
+        <GoogleTagManager gtmId={GTM_ID} />
+        <YandexMetrika />
         <noscript>
           <iframe
             src={`https://www.googletagmanager.com/ns.html?id=${GTM_ID}`}
@@ -92,21 +103,6 @@ export default async function LocaleLayout({
             <AuthModals />
           </SessionProvider>
         </NextIntlClientProvider>
-
-        <Script id="gtm" strategy="afterInteractive">
-          {`(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-})(window,document,'script','dataLayer','${GTM_ID}');`}
-        </Script>
-
-        <Script id="yandex-metrika" strategy="afterInteractive">
-          {`(function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
-m[i].l=1*new Date();k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
-(window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
-ym(${YANDEX_METRIKA_ID}, "init", {clickmap:true, trackLinks:true, accurateTrackBounce:true, webvisor:true});`}
-        </Script>
       </body>
     </html>
   );
