@@ -40,6 +40,7 @@ export default async function ContactsPageRoute({ params }: { params: Promise<{ 
                           src="https://www.google.com/maps/d/u/0/embed?mid=1Vb1NeI0TQaSpeRKgHRlSPPnB3ly1i5Zq"
                           width="100%"
                           height="100%"
+                          loading="lazy"
                         />
                       </div>
                     </div>

@@ -49,7 +49,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
   return (
     <div id="homepage">
       <section className="section-slide uk-cover-container uk-width-1-1">
-        <img uk-cover="true" className="uk-width-1-1 uk-cover" src="/slide.jpg" alt={data.title} />
+        <img uk-cover="true" className="uk-width-1-1 uk-cover" src="/slide.jpg" alt={data.title} fetchPriority="high" />
         <div className="uk-container">
           <div className="uk-grid uk-child-width-1-1" uk-grid="">
             <div>
