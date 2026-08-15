@@ -98,7 +98,7 @@ export default async function LocaleLayout({
           <SessionProvider>
             <UikitInit />
             <Header locale={locale} />
-            {children}
+            <main>{children}</main>
             <Footer locale={locale} />
             <AuthModals />
           </SessionProvider>
