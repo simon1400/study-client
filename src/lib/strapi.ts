@@ -14,6 +14,28 @@ const STRAPI_PUBLIC_URL = (
 /** ISR: страницы живут час, публикация в Strapi сбрасывает кеш вебхуком (POST /api/revalidate). */
 const REVALIDATE_SECONDS = 3600;
 
+/**
+ * Базовая локаль Strapi. Сайт четырёхъязычный, но контент переводится постепенно:
+ * если в запрошенной локали записи нет, отдаём русскую — вместо пустой страницы.
+ * Когда переводы появятся, поведение не изменится: фолбэк срабатывает только на пустом ответе.
+ */
+const FALLBACK_LOCALE = 'ru';
+
+/**
+ * 404 от Strapi — это «в этой локали записи нет» (single type без перевода) либо
+ * «такого типа контента ещё нет на сервере» (тип добавлен, но Strapi не пересобран).
+ * И то и другое для страницы не ошибка: секция просто не отрисуется, а локаль
+ * подхватит фолбэк. Всё остальное (400, 500) по-прежнему валит рендер.
+ */
+async function orMissing<T>(load: () => Promise<T>, empty: T): Promise<T> {
+  try {
+    return await load();
+  } catch (error) {
+    if (error instanceof StrapiError && error.status === 404) return empty;
+    throw error;
+  }
+}
+
 export type StrapiQuery = Record<string, unknown>;
 
 export class StrapiError extends Error {
@@ -56,17 +78,19 @@ export async function getCollection<T>(
   plural: string,
   { locale, query = {} }: { locale: string; query?: StrapiQuery }
 ): Promise<T[]> {
-  const { data } = await strapiFetch<T[]>(
-    plural,
-    {
-      locale,
-      sort: ['order:asc'],
-      pagination: { pageSize: 100 },
-      ...query,
-    },
-    [plural]
-  );
-  return data ?? [];
+  const fetchIn = (loc: string) =>
+    orMissing(async () => {
+      const { data } = await strapiFetch<T[]>(
+        plural,
+        { locale: loc, sort: ['order:asc'], pagination: { pageSize: 100 }, ...query },
+        [plural]
+      );
+      return data ?? [];
+    }, [] as T[]);
+
+  const data = await fetchIn(locale);
+  if (data.length || locale === FALLBACK_LOCALE) return data;
+  return fetchIn(FALLBACK_LOCALE);
 }
 
 /** Одна запись коллекции по slug. `null`, если не нашлась. */
@@ -75,17 +99,19 @@ export async function getBySlug<T>(
   slug: string,
   { locale, query = {} }: { locale: string; query?: StrapiQuery }
 ): Promise<T | null> {
-  const { data } = await strapiFetch<T[]>(
-    plural,
-    {
-      locale,
-      filters: { slug: { $eq: slug } },
-      pagination: { pageSize: 1 },
-      ...query,
-    },
-    [plural, `${plural}:${slug}`]
-  );
-  return data?.[0] ?? null;
+  const fetchIn = (loc: string) =>
+    orMissing(async () => {
+      const { data } = await strapiFetch<T[]>(
+        plural,
+        { locale: loc, filters: { slug: { $eq: slug } }, pagination: { pageSize: 1 }, ...query },
+        [plural, `${plural}:${slug}`]
+      );
+      return data?.[0] ?? null;
+    }, null);
+
+  const item = await fetchIn(locale);
+  if (item || locale === FALLBACK_LOCALE) return item;
+  return fetchIn(FALLBACK_LOCALE);
 }
 
 /** Single type (homepage, global, contacts-page). */
@@ -93,8 +119,15 @@ export async function getSingle<T>(
   singular: string,
   { locale, query = {} }: { locale: string; query?: StrapiQuery }
 ): Promise<T | null> {
-  const { data } = await strapiFetch<T | null>(singular, { locale, ...query }, [singular]);
-  return data ?? null;
+  const fetchIn = (loc: string) =>
+    orMissing(async () => {
+      const { data } = await strapiFetch<T | null>(singular, { locale: loc, ...query }, [singular]);
+      return data ?? null;
+    }, null);
+
+  const item = await fetchIn(locale);
+  if (item || locale === FALLBACK_LOCALE) return item;
+  return fetchIn(FALLBACK_LOCALE);
 }
 
 /**

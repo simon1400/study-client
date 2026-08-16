@@ -219,14 +219,34 @@ export type StepNumber = keyof StepMap;
 
 export const STEP_NUMBERS: StepNumber[] = [1, 2, 3, 4, 5, 6];
 
-/** Заголовки правого сайдбара анкеты — те же, что в старом `right-sidebar`. */
-export const STEP_TITLES: Record<StepNumber, string> = {
-  1: 'Персональные данные',
-  2: 'Заграничный паспорт',
-  3: 'Информация о семье',
-  4: 'Образование',
-  5: 'Контакты',
-  6: 'Приезд в Чехию',
+/**
+ * Порядок шагов в интерфейсе (макет редизайна) → номер поля `stepN` в Strapi.
+ *
+ * В базе шаги пронумерованы так, как их вёл старый сайт: 3 — семья, 4 — образование,
+ * 5 — контакты. Макет ставит их иначе (адрес и контакты → семья → образование),
+ * поэтому в URL и в навигации живёт ПОЗИЦИЯ, а в Strapi — прежний ключ хранения.
+ * Мигрированные анкеты от этого не страдают.
+ */
+export const STEP_ORDER: StepNumber[] = [1, 2, 5, 3, 4, 6];
+
+/** Позиция в интерфейсе (1…6) → ключ хранения. */
+export function storageStep(position: number): StepNumber | null {
+  return STEP_ORDER[position - 1] ?? null;
+}
+
+/** Ключ хранения → позиция в интерфейсе. */
+export function stepPosition(step: StepNumber): number {
+  return STEP_ORDER.indexOf(step) + 1;
+}
+
+/** Ключ строки заголовка шага в словарях (`user.steps.*`). */
+export const STEP_TITLE_KEYS: Record<StepNumber, string> = {
+  1: 'personal',
+  2: 'passport',
+  3: 'family',
+  4: 'education',
+  5: 'address',
+  6: 'arrival',
 };
 
 export function isStepNumber(value: unknown): value is StepNumber {

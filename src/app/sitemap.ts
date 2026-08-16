@@ -26,12 +26,17 @@ const SECTIONS: Array<{ path: string; priority: number; changeFrequency: 'daily'
   { path: '/contacts', priority: 0.6, changeFrequency: 'monthly' },
 ];
 
-/** Коллекции с детальными страницами: множественное имя в Strapi → префикс URL. */
-const COLLECTIONS: Array<{ plural: string; prefix: string }> = [
+/**
+ * Коллекции с детальными страницами: множественное имя в Strapi → префикс URL.
+ * `pages` — технические страницы (защита данных, оферта); они живут в корне,
+ * поэтому префикс пустой, а приоритет ниже разделов.
+ */
+const COLLECTIONS: Array<{ plural: string; prefix: string; priority?: number }> = [
   { plural: 'programs', prefix: '/program' },
   { plural: 'universities', prefix: '/university' },
   { plural: 'livings', prefix: '/living' },
   { plural: 'articles', prefix: '/blog' },
+  { plural: 'pages', prefix: '', priority: 0.3 },
 ];
 
 type Sluggable = { slug: string; updatedAt?: string | null };
@@ -48,7 +53,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }));
 
   const collections = await Promise.all(
-    COLLECTIONS.map(async ({ plural, prefix }) => {
+    COLLECTIONS.map(async ({ plural, prefix, priority = 0.7 }) => {
       // если Strapi недоступен, карта сайта всё равно отдаётся — с одними разделами
       try {
         const items = await getCollection<Sluggable>(plural, {
@@ -61,7 +66,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
             url: `${SITE_URL}${prefix}/${item.slug}`,
             lastModified: item.updatedAt ? new Date(item.updatedAt) : now,
             changeFrequency: 'monthly' as const,
-            priority: 0.7,
+            priority,
           }));
       } catch {
         return [];

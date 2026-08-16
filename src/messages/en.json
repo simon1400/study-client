@@ -1,0 +1,338 @@
+{
+  "common": {
+    "readMore": "Learn more",
+    "read": "Read",
+    "back": "Back",
+    "sections": "Sections",
+    "menu": "Menu",
+    "more": "More",
+    "close": "Close",
+    "faq": "Questions and answers",
+    "price": "Price",
+    "onRequest": "on request",
+    "loading": "Loading…"
+  },
+  "nav": {
+    "home": "Home",
+    "contacts": "Contacts",
+    "login": "Sign in",
+    "logout": "Sign out",
+    "account": "My account",
+    "questionnaire": "My application",
+    "changePassword": "Change password",
+    "language": "Language",
+    "callUs": "Call us"
+  },
+  "cta": {
+    "form": "Fill in the application",
+    "call": "Request a call",
+    "pickProgram": "Find a programme",
+    "ask": "Ask a question"
+  },
+  "home": {
+    "programsEyebrow": "Programmes",
+    "programsTitle": "What we offer",
+    "programsAll": "All programmes",
+    "stepsEyebrow": "Step by step",
+    "stepsTitle": "How it will work",
+    "reviewsEyebrow": "Reviews",
+    "reviewsTitle": "Our students are already in Czechia",
+    "mediaEyebrow": "Media",
+    "mediaTitle": "Our students' life",
+    "mediaLink": "follow on Instagram",
+    "contactsTitle": "Our office in central Brno",
+    "showMap": "Show the map",
+    "mapHint": "The Google map loads on click, so the page does not pull third-party scripts up front."
+  },
+  "callForm": {
+    "name": "Your name",
+    "namePlaceholder": "John",
+    "phone": "Phone",
+    "phonePlaceholder": "+420 777 000 000",
+    "submit": "Request a call",
+    "sentTitle": "Thank you!",
+    "sentText": "We will call you back during the next working hours.",
+    "privacy": "We never share your data with third parties",
+    "errorName": "Please enter your name",
+    "errorPhone": "Please enter your phone number",
+    "errorSend": "Something went wrong — please reload the page and try again"
+  },
+  "footer": {
+    "tagline": "Studying in Czechia end to end: courses, admission, full support.",
+    "rights": "All rights reserved.",
+    "social": "Follow us"
+  },
+  "pages": {
+    "programs": {
+      "eyebrow": "Studying",
+      "title": "Programmes",
+      "lead": "End-to-end programmes matched to your goals and budget. Prices are fixed in the contract — no hidden extras.",
+      "installments": "* payment in instalments available",
+      "ctaTitle": "Not sure which one fits?",
+      "ctaText": "We will match a programme to your goals and budget — free, in a single call."
+    },
+    "universities": {
+      "eyebrow": "Where to apply",
+      "title": "Universities",
+      "lead": "Public universities in Czechia our students go to. Studying in Czech is free of charge.",
+      "info": "About the university",
+      "faculties": "Faculties and majors",
+      "ctaTitle": "Want to get in?",
+      "ctaText": "We prepare you for the entrance exams and handle the paperwork — from courses to enrolment."
+    },
+    "living": {
+      "eyebrow": "Student housing",
+      "title": "Accommodation",
+      "lead": "Student dormitories next to the universities. We book your place in advance, before you arrive. Payment in instalments is available.",
+      "info": "About the dormitory",
+      "book": "Book a place"
+    },
+    "services": {
+      "eyebrow": "Service",
+      "title": "Additional services",
+      "lead": "Standalone services for those who do not need the full support programme."
+    },
+    "blog": {
+      "eyebrow": "Media",
+      "title": "Our blog about Czechia",
+      "lead": "Useful articles about studying, paperwork and student life in Czechia.",
+      "ctaTitle": "Ready to learn Czech?",
+      "ctaText": "One-year courses at public universities — B2 by the time you apply.",
+      "ctaButton": "Choose a course"
+    },
+    "agents": {
+      "eyebrow": "Close to you",
+      "title": "Representatives",
+      "lead": "Our representatives in your country will answer your questions and help with documents and the contract — locally, without travelling to Czechia.",
+      "contact": "Get in touch"
+    },
+    "faq": {
+      "eyebrow": "Help",
+      "title": "Questions and answers",
+      "lead": "Answers to the questions we are asked most often.",
+      "leadAction": "Did not find yours — request a call."
+    },
+    "partners": {
+      "eyebrow": "Partnership",
+      "title": "Partners",
+      "lead": "Companies and organisations we work with.",
+      "partnerCta": "Want to become our partner?",
+      "partnerCtaText": "Write to us or request a call — we will discuss the details.",
+      "write": "Write to us"
+    },
+    "contacts": {
+      "eyebrow": "Get in touch",
+      "title": "Contacts",
+      "lead": "Write or call us — we reply during working hours. Our office is in central Brno.",
+      "team": "Our team"
+    },
+    "program": {
+      "includeTitle": "What the programme includes",
+      "tabBefore": "Before arriving in Czechia",
+      "tabAfter": "After arriving in Czechia",
+      "tabAdditional": "Additional services",
+      "notIncluded": "What the programme does not include",
+      "priceLabel": "Programme price",
+      "priceNote": "The price is fixed in the contract — no hidden extras.",
+      "ctaTitle": "Not sure this is your option?",
+      "ctaText": "Compare the programmes or ask us — we will match one to your goals and budget for free.",
+      "allPrograms": "All programmes"
+    },
+    "info": {
+      "download": "Download the form"
+    }
+  },
+  "login": {
+    "title": "Sign in to your account",
+    "hint": "The password is in the e-mail we sent after your application.",
+    "email": "E-mail",
+    "password": "Password",
+    "error": "Wrong e-mail or password",
+    "forgot": "Forgot your password?",
+    "resetTitle": "Password recovery",
+    "resetHint": "We will e-mail you a one-time link to set a new password.",
+    "resetSubmit": "Send the link",
+    "resetError": "Enter the e-mail your account is registered with",
+    "sentTitle": "E-mail sent",
+    "sentText": "If the address is registered, the password link is already in your inbox. The link works once.",
+    "noMail": "No e-mail?",
+    "writeUs": "Write to us"
+  },
+  "user": {
+    "nav": {
+      "overview": "Overview",
+      "questionnaire": "Application",
+      "contract": "Contract",
+      "payment": "Payment",
+      "password": "Change password"
+    },
+    "dashboard": {
+      "greeting": "Hi {name}!",
+      "lead": "Four steps to studying in Czechia. Go in order — we help with every one.",
+      "progress": "{done} of {total} done",
+      "profileNumber": "Application no. {number}",
+      "helpTitle": "Stuck somewhere?",
+      "helpText": "Write to us or request a call — we will advise on anything, quickly.",
+      "helpWrite": "Write to us",
+      "helpCall": "Request a call",
+      "stepProgram": "Study programme",
+      "stepProgramEmpty": "The contract and the price depend on the programme",
+      "stepProgramCta": "Choose a programme",
+      "stepQuestionnaire": "Application form",
+      "stepQuestionnaireEmpty": "6 short steps — you can fill them in one by one",
+      "stepQuestionnairePart": "{done} of 6 steps filled in",
+      "stepQuestionnaireDone": "Fully filled in",
+      "stepQuestionnaireCta": "Fill in the form",
+      "stepQuestionnaireContinue": "Continue",
+      "stepContract": "Contract",
+      "stepContractEmpty": "Read it and sign online",
+      "stepContractDone": "Signed on {date}",
+      "stepContractCta": "Go to the contract",
+      "stepPayment": "Deposit",
+      "stepPaymentEmpty": "We will calculate it once the programme is chosen",
+      "stepPaymentReady": "Deposit {percent}% — {amount}",
+      "stepPaymentPending": "Waiting for the transfer to arrive",
+      "stepPaymentDone": "Received, thank you!",
+      "stepPaymentCta": "Go to payment"
+    },
+    "questionnaire": {
+      "stepOf": "Step {step} of {total}",
+      "filled": "{percent}% filled in",
+      "back": "Back",
+      "next": "Save and continue",
+      "finish": "Save the form",
+      "saveError": "Could not save. Reload the page and try again.",
+      "helpTitle": "Trouble with the form?",
+      "helpText": "Write to us or request a call — we will help you fill it in.",
+      "add": "Add",
+      "remove": "Remove"
+    },
+    "contract": {
+      "title": "Contract",
+      "empty": "The contract template has not been filled in yet — please come back a bit later.",
+      "needProgram": "Choose a study programme first — it defines the subject of the contract and the amount.",
+      "toProgram": "Choose a programme",
+      "signTitle": "Signing",
+      "program": "Programme",
+      "price": "Price",
+      "prepay": "Deposit {percent}%",
+      "signatureLabel": "Your full name — this is your signature",
+      "signaturePlaceholder": "John Smith",
+      "agree": "I have read the contract and accept its terms",
+      "sign": "Sign the contract",
+      "signNote": "We will e-mail you a copy right after signing.",
+      "signedTitle": "Contract signed",
+      "toPayment": "Go to payment",
+      "downloadPdf": "Download PDF",
+      "executor": "Provider",
+      "customer": "Client",
+      "signError": "Could not sign. Reload the page and try again."
+    },
+    "payment": {
+      "title": "Programme payment",
+      "planLabel": "How much you pay now",
+      "half": "Deposit {percent}%",
+      "full": "Full amount",
+      "method": "Bank transfer",
+      "beneficiary": "Beneficiary",
+      "iban": "IBAN",
+      "swift": "SWIFT",
+      "vs": "Variable symbol",
+      "amount": "Amount",
+      "mark": "I have paid — mark it",
+      "markNote": "A transfer usually takes 1–2 working days. We will confirm receipt by e-mail.",
+      "order": "Your order",
+      "dueNow": "Due now",
+      "remainder": "Remaining before studies start",
+      "needContract": "Sign the contract first — it fixes the amount.",
+      "toContract": "Go to the contract",
+      "noBank": "The transfer details have not been filled in yet. Write to us and we will send them by e-mail.",
+      "pendingTitle": "Waiting for the transfer",
+      "pendingText": "You marked the transfer. As soon as the money arrives, a manager confirms the payment — usually 1–2 working days.",
+      "paidTitle": "Payment received!",
+      "paidText": "Every step is done. A manager will contact you within one working day about what comes next: documents, visa, arrival.",
+      "toDashboard": "Back to the account",
+      "error": "Could not mark the payment. Reload the page and try again."
+    },
+    "password": {
+      "title": "Change password",
+      "hint": "Better replace the password from the e-mail with your own.",
+      "current": "Current password",
+      "new": "New password",
+      "repeat": "Repeat the new password",
+      "rule": "At least 8 characters, letters and digits",
+      "save": "Save the password",
+      "saved": "Password updated. Use it the next time you sign in.",
+      "mismatch": "The passwords do not match",
+      "tooShort": "At least 8 characters",
+      "error": "Could not change the password. Check the current one."
+    },
+    "program": {
+      "title": "Choose a programme",
+      "cancel": "Cancel",
+      "confirm": "Choose programme",
+      "notSelected": "Not selected"
+    },
+    "steps": {
+      "personal": "Personal details",
+      "passport": "Passport",
+      "address": "Address and contacts",
+      "family": "Family",
+      "education": "Education",
+      "arrival": "Arrival in Czechia"
+    }
+  },
+  "notFound": {
+    "title": "Page not found",
+    "toHome": "Go to homepage"
+  },
+  "registration": {
+    "eyebrow": "Step 1 — application",
+    "title": "Fill in the application",
+    "subtitle": "A couple of minutes — the rest continues in your account.",
+    "name": "First name",
+    "surname": "Last name",
+    "birthday": "Date of birth",
+    "birthdayPlaceholder": "04.03.2007",
+    "sex": "Gender",
+    "male": "Male",
+    "female": "Female",
+    "country": "Country",
+    "city": "City",
+    "cityPlaceholder": "Kyiv",
+    "email": "E-mail",
+    "phone": "Phone",
+    "phonePlaceholder": "+420 000 000 000",
+    "note": "The password for your account will arrive at this e-mail. By sending the application you agree to the processing of your data.",
+    "submit": "Send the application",
+    "errorEmail": "A user with this e-mail already exists — sign in or use another one.",
+    "errorEmpty": "Please fill in every field.",
+    "errorServer": "Something went wrong — reload the page and try again.",
+    "doneTitle": "Application received!",
+    "doneWithPassword": "We could not send the e-mail with the password, so here it is — keep it safe.",
+    "doneMailed": "We have sent the password for your account by e-mail. It looks like this:",
+    "mailFrom": "Study in the Czech Republic · noreply@studycz.cz",
+    "mailLabel": "Your account password:",
+    "mailHidden": "sent to {email}",
+    "mailHint": "You can change the password in your account at any time.",
+    "toCabinet": "Go to my account"
+  },
+  "gdpr": {
+    "text": "We use cookies.",
+    "more": "Learn more",
+    "accept": "Accept",
+    "decline": "Decline"
+  },
+  "reset": {
+    "title": "New password",
+    "hint": "Choose the password you will sign in with.",
+    "password": "New password",
+    "repeat": "Repeat the password",
+    "submit": "Save the password",
+    "errorCode": "The link is invalid or has already been used. Request password recovery again.",
+    "errorMismatch": "The passwords do not match",
+    "errorShort": "The password must be at least 6 characters",
+    "errorServer": "Something went wrong — reload the page and try again",
+    "toLogin": "To sign in"
+  }
+}

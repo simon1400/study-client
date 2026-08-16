@@ -3,14 +3,14 @@
 import { useState } from 'react';
 
 /**
- * Общая логика входа для двух форм: выпадашки в шапке и полноэкранной
- * модалки `#modal-login` (её открывает иконка пользователя на мобильных).
+ * Логика входа для страницы `/login` (в редизайне вход — отдельный экран,
+ * а не модалка).
  *
  * После успеха уходим в ЛК жёстким переходом, как на старом сайте: кука с JWT
  * ставится ответом роут-хендлера, и полная перезагрузка гарантирует, что её
  * увидят и серверные страницы, и шапка.
  */
-export function useLogin() {
+export function useLogin({ redirectTo = '/user' }: { redirectTo?: string } = {}) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState(false);
@@ -31,7 +31,7 @@ export function useLogin() {
         body: JSON.stringify({ email, password }),
       });
       if (!res.ok) throw new Error('login failed');
-      window.location.href = '/user/personal-area';
+      window.location.href = redirectTo;
     } catch {
       setError(true);
       setLoading(false);

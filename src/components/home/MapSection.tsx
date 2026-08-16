@@ -1,35 +1,28 @@
-'use client';
-
-/* eslint-disable @next/next/no-img-element -- статика из public/ */
-import { useState } from 'react';
-
-export default function MapSection() {
-  const [showMap, setShowMap] = useState(false);
-  // iframe Google Maps тянет ~600КБ скриптов — не монтируем его, пока блок ни разу
-  // не открыли, иначе карта грузится на каждом визите главной при свёрнутом блоке
-  const [mounted, setMounted] = useState(false);
-
+/**
+ * Карта офиса (секция «Контакты» на главной и страница /contacts).
+ * По решению пользователя (2026-08-16) показывается всегда — как в макете редизайна.
+ * `loading="lazy"` откладывает загрузку iframe до подхода к вьюпорту, чтобы не терять
+ * целиком оптимизацию LCP из этапа 8.
+ */
+export default function MapSection({
+  mid = '1yY8eiTQPebST_CY0i1KFJ4Vq_YXEq4Vg',
+  className = '',
+}: {
+  mid?: string;
+  className?: string;
+}) {
   return (
-    <section className="map">
-      <button
-        className="button-map"
-        onClick={() => {
-          setShowMap(!showMap);
-          setMounted(true);
-        }}
-      >
-        НАШ ОФИС В ЦЕНТРЕ БРНО <img src="/angle-down-light.svg" alt="Down" />
-      </button>
-      <div className={`map-wrap ${showMap ? 'show-map' : ''}`}>
-        {mounted && (
-          <iframe
-            title="Mapa"
-            src="https://www.google.com/maps/d/u/0/embed?mid=1yY8eiTQPebST_CY0i1KFJ4Vq_YXEq4Vg"
-            width="100%"
-            height="100%"
-          />
-        )}
-      </div>
-    </section>
+    <div
+      className={`rounded-panel min-h-[320px] overflow-hidden border border-line bg-white md:min-h-[380px] ${className}`}
+    >
+      <iframe
+        title="Mapa"
+        src={`https://www.google.com/maps/d/u/0/embed?mid=${mid}`}
+        width="100%"
+        height="428"
+        loading="lazy"
+        className="-mt-12 block border-0"
+      />
+    </div>
   );
 }

@@ -1,8 +1,8 @@
 'use client';
 
 import { useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { pushEvent } from '@/lib/analytics';
-import '@/styles/legacy/modal-done.scss';
 
 type Errors = { name?: boolean; phone?: boolean; send?: boolean };
 
@@ -13,7 +13,9 @@ function formatNow(): string {
   return `${pad(d.getDate())}.${pad(d.getMonth() + 1)}.${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
 }
 
+/** Форма «Заказать звонок» — белая карточка внутри синего блока (макет главной). */
 export default function CallForm() {
+  const t = useTranslations('callForm');
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [errors, setErrors] = useState<Errors>({});
@@ -38,7 +40,6 @@ export default function CallForm() {
       setName('');
       setPhone('');
       setDone(true);
-      setTimeout(() => setDone(false), 4000);
     } catch {
       setErrors({ send: true });
     } finally {
@@ -48,44 +49,53 @@ export default function CallForm() {
 
   if (done) {
     return (
-      <div className="modal-done-wrap modal-call-done">
-        <div className="big-circle-done" />
-        <p>Спасибо! Мы свяжемся с вами в ближайшее время</p>
+      <div className="rounded-card bg-white/10 p-10 text-center">
+        <div className="font-display mb-2.5 text-[22px] text-white">{t('sentTitle')}</div>
+        <p className="text-on-blue m-0">{t('sentText')}</p>
       </div>
     );
   }
 
   return (
-    <form onSubmit={submit}>
-      <label htmlFor="call_input_name">Ваше имя</label>
-      <input
-        id="call_input_name"
-        className={errors.name ? 'uk-form-danger' : ''}
-        type="text"
-        name="name"
-        value={name}
-        placeholder="Дмитрий"
-        onChange={(e) => setName(e.target.value)}
-      />
-      <label htmlFor="call_input_phone">Телефон</label>
-      <input
-        id="call_input_phone"
-        className={errors.phone ? 'uk-form-danger' : ''}
-        type="text"
-        name="phone"
-        value={phone}
-        placeholder="+7 (965) 77-253-77"
-        onChange={(e) => setPhone(e.target.value)}
-      />
-      <button className="button button-accent" disabled={loading}>
-        {loading ? <div uk-spinner="ratio: 0.5" style={{ marginLeft: '-20px', marginRight: '20px' }} /> : null}
-        Заказать звонок
+    <form onSubmit={submit} className="rounded-card flex flex-col gap-3.5 bg-white p-6 md:p-8" noValidate>
+      <div className="flex flex-col gap-2">
+        <label className="field-label" htmlFor="call_input_name">
+          {t('name')}
+        </label>
+        <input
+          id="call_input_name"
+          className={`field ${errors.name ? 'field-error' : ''}`}
+          type="text"
+          name="name"
+          value={name}
+          placeholder={t('namePlaceholder')}
+          onChange={(e) => setName(e.target.value)}
+        />
+        {errors.name ? <span className="field-message">{t('errorName')}</span> : null}
+      </div>
+
+      <div className="flex flex-col gap-2">
+        <label className="field-label" htmlFor="call_input_phone">
+          {t('phone')}
+        </label>
+        <input
+          id="call_input_phone"
+          className={`field ${errors.phone ? 'field-error' : ''}`}
+          type="tel"
+          name="phone"
+          value={phone}
+          placeholder={t('phonePlaceholder')}
+          onChange={(e) => setPhone(e.target.value)}
+        />
+        {errors.phone ? <span className="field-message">{t('errorPhone')}</span> : null}
+      </div>
+
+      <button type="submit" className="btn btn-primary btn-block mt-3" disabled={loading}>
+        {t('submit')}
       </button>
-      {errors.send ? (
-        <div className="tm-call-danger">
-          <span className="uk-text-danger">Произошла ошибка, обновите страницу и попробуйте снова</span>
-        </div>
-      ) : null}
+
+      {errors.send ? <span className="field-message text-center">{t('errorSend')}</span> : null}
+      <p className="caption m-0 text-center">{t('privacy')}</p>
     </form>
   );
 }

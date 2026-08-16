@@ -3,21 +3,16 @@ import { GoogleTagManager } from '@next/third-parties/google';
 import { notFound } from 'next/navigation';
 import { hasLocale, NextIntlClientProvider } from 'next-intl';
 import { setRequestLocale } from 'next-intl/server';
-import { routing, strapiLocale } from '@/i18n/routing';
+import { htmlLang, routing, strapiLocale } from '@/i18n/routing';
+import { fontVariables } from '@/lib/fonts';
 import { getSingle } from '@/lib/strapi';
 import type { Global } from '@/types/strapi';
-import Header from '@/components/layout/Header';
-import Footer from '@/components/layout/Footer';
-import UikitInit from '@/components/UikitInit';
 import YandexMetrika from '@/components/YandexMetrika';
 import SessionProvider from '@/components/auth/SessionProvider';
-import AuthModals from '@/components/auth/AuthModals';
 
-// порядок как на старом сайте: UIkit из CDN в index.html, затем бандл app.css
-// (тема + свой UIkit) и правки поверх
-import 'uikit/dist/css/uikit.min.css';
-import '@/styles/theme.css';
-import '@/styles/style.scss';
+// Дизайн-система редизайна — единственный файл стилей сайта (§ стайлгайд).
+// UIkit и тема старого сайта удалены: переверстаны все страницы.
+import '@/styles/ds.css';
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://studycz.cz';
 const GTM_ID = 'GTM-M3HKN8D';
@@ -79,8 +74,8 @@ export default async function LocaleLayout({
   setRequestLocale(locale);
 
   return (
-    <html lang={locale}>
-      <body>
+    <html lang={htmlLang(locale)} className={fontVariables}>
+      <body className="ds">
         {/* Google Tag Manager и Яндекс.Метрика — те же счётчики, что в старом public/index.html */}
         <script dangerouslySetInnerHTML={{ __html: CONSENT_DEFAULT_JS }} />
         <GoogleTagManager gtmId={GTM_ID} />
@@ -94,14 +89,9 @@ export default async function LocaleLayout({
           />
         </noscript>
 
+        {/* Шапка и подвал живут в группе (site): у входа и личного кабинета своя оболочка */}
         <NextIntlClientProvider>
-          <SessionProvider>
-            <UikitInit />
-            <Header locale={locale} />
-            <main>{children}</main>
-            <Footer locale={locale} />
-            <AuthModals />
-          </SessionProvider>
+          <SessionProvider>{children}</SessionProvider>
         </NextIntlClientProvider>
       </body>
     </html>

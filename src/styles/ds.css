@@ -1,0 +1,860 @@
+/* ============================================================================
+ * StudyCZ Design System v1.0 (2026) — единственный источник токенов редизайна.
+ * Собран по файлу «Стайлгайд.dc.html» из claude.ai/design.
+ *
+ * Порядок каскадных слоёв объявлен ПЕРВЫМ и действует на весь сайт:
+ *   theme      — токены Tailwind (@theme)
+ *   base       — preflight Tailwind
+ *   legacy     — UIkit + тема старого сайта (src/styles/legacy.css, style.scss)
+ *   components — компоненты редизайна (ниже) — всегда бьют legacy
+ *   utilities  — утилиты Tailwind — бьют всё
+ * Благодаря этому старые страницы живут как раньше, а размеченное
+ * утилитами/DS-классами новое всегда выигрывает у legacy без !important.
+ * По мере переверстки страниц слой legacy исчезает.
+ * ========================================================================== */
+
+@layer theme, base, legacy, components, utilities;
+
+@import 'tailwindcss/theme.css' layer(theme);
+@import 'tailwindcss/preflight.css' layer(base);
+@import 'tailwindcss/utilities.css' layer(utilities);
+
+@source '../app/**/*.{ts,tsx}';
+@source '../components/**/*.{ts,tsx}';
+
+/* ---------------------------------------------------------------- 01 Токены */
+@theme {
+  /* --- Шрифты (§02). Значения переменных приходят из next/font, см. lib/fonts.ts */
+  --font-sans: var(--font-golos), 'Golos Text', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-display: var(--font-unbounded), 'Unbounded', var(--font-golos), sans-serif;
+
+  /* --- Цвета (§01). Основные */
+  --color-blue: #2434e8; /* бренд, ссылки, акцентные карточки */
+  --color-blue-dark: #1a27c4; /* hover синего */
+  --color-yellow: #ffd43a; /* главные CTA */
+  --color-yellow-dark: #f5c518; /* hover жёлтого */
+  --color-ink: #0b0e2c; /* заголовки, тёмные секции, футер */
+  --color-tint: #e9ebff; /* подложки иконок, бейджи */
+  --color-tint-yellow: #fff4cc; /* жёлтая подложка иконки */
+
+  /* --- Цвета. Нейтральные */
+  --color-body: #3a4060; /* основной текст */
+  --color-muted: #5a607f; /* вторичный текст */
+  --color-faint: #9aa0bf; /* плейсхолдеры, подписи */
+  --color-line: #eceef7; /* рамки карточек */
+  --color-line-strong: #e0e3f0; /* разделители */
+  --color-border: #d8dbec; /* рамки полей и ghost-кнопок */
+  --color-border-blue: #c9cdf5; /* рамка компактной кнопки */
+  --color-mist: #f5f6fb; /* фон светлых секций */
+
+  /* --- Цвета. Текст на тёмном/синем */
+  --color-on-blue: #c7cbe3;
+  --color-on-ink: #b7bcd9;
+  --color-on-ink-faint: #8f96c9;
+
+  /* --- Цвета. Состояния */
+  --color-success: #7ce0a3;
+  --color-danger: #e4685a;
+  --color-danger-strong: #c0392b;
+  --color-danger-bg: #fdf3f2;
+
+  /* --- Радиусы (§07): кнопки 999px, поля 12px, карточки 20–24px */
+  --radius-field: 12px;
+  --radius-icon: 14px;
+  --radius-card: 20px;
+  --radius-panel: 24px;
+  --radius-hero: 28px;
+
+  /* --- Тени: только для плавающих элементов (§05) */
+  --shadow-float: 0 12px 32px rgb(11 14 44 / 0.12);
+  --shadow-float-dark: 0 12px 32px rgb(11 14 44 / 0.2);
+  --shadow-pop: 0 16px 40px rgb(11 14 44 / 0.12);
+  --shadow-bar: 0 12px 40px rgb(11 14 44 / 0.18);
+
+  /* --- Сетка (§07): контейнер 1240px */
+  --container-page: 1240px;
+  --container-prose: 880px;
+
+  /* --- Типографика (§02) */
+  --text-eyebrow: 0.8125rem; /* 13px caps */
+  --text-eyebrow--line-height: 1.2;
+  --text-caption: 0.8125rem; /* 13px */
+  --text-caption--line-height: 1.45;
+  --text-body-l: 1.125rem; /* 18px лид */
+  --text-body-l--line-height: 1.55;
+
+  /* --- Высота шапки, чтобы sticky-элементы знали отступ */
+  --spacing-header: 72px;
+}
+
+/* ------------------------------------------------------------- 02 Компоненты
+ * Слой components идёт ПОСЛЕ legacy — эти классы всегда перекрывают
+ * глобальные правила старой темы (h2{font-family:Arial}, ul{padding-left} и т.п.).
+ */
+@layer components {
+  /* --- корень новых страниц: типографика и фон по стайлгайду */
+  .ds {
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    line-height: 1.55;
+    color: var(--color-body);
+    background: #fff;
+  }
+
+  .ds ::placeholder {
+    color: var(--color-faint);
+  }
+
+  .ds p:last-child {
+    margin-bottom: 0;
+  }
+
+  /* --- Сетка ------------------------------------------------------------- */
+
+  /** Контейнер страницы: 1240px, поля 40px (моб. 20px). §07 */
+  .container-page {
+    width: 100%;
+    max-width: calc(var(--container-page) + 0px);
+    margin-inline: auto;
+    padding-inline: 20px;
+  }
+
+  @media (min-width: 768px) {
+    .container-page {
+      padding-inline: 40px;
+    }
+  }
+
+  /** Узкий контейнер для статей и аккордеонов — 880px. */
+  .container-prose {
+    width: 100%;
+    max-width: var(--container-prose);
+    margin-inline: auto;
+    padding-inline: 20px;
+  }
+
+  @media (min-width: 768px) {
+    .container-prose {
+      padding-inline: 40px;
+    }
+  }
+
+  /** Вертикальный ритм секции: 88px (моб. 44px). §07 */
+  .section {
+    padding-block: 44px;
+  }
+
+  @media (min-width: 768px) {
+    .section {
+      padding-block: 88px;
+    }
+  }
+
+  /* --- Типографика ------------------------------------------------------- */
+
+  /** Надзаголовок секции: 13px, 600, caps, letter-spacing .08em. §02 */
+  .eyebrow {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-blue);
+    margin-bottom: 10px;
+  }
+
+  @media (min-width: 768px) {
+    .eyebrow {
+      font-size: 13px;
+      margin-bottom: 12px;
+    }
+  }
+
+  /** Надзаголовок на тёмной секции — жёлтый. */
+  .eyebrow-on-ink {
+    color: var(--color-yellow);
+  }
+
+  /** H1 первого экрана главной: Unbounded 600, 46/1.15 (моб. 28/1.2). §02 */
+  .h1 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 28px;
+    line-height: 1.2;
+    color: var(--color-ink);
+    margin: 0;
+    text-wrap: balance;
+  }
+
+  @media (min-width: 768px) {
+    .h1 {
+      font-size: 46px;
+      line-height: 1.15;
+    }
+  }
+
+  /** H1 внутренней страницы — 38px. */
+  .h1-page {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 26px;
+    line-height: 1.2;
+    color: var(--color-ink);
+    margin: 0;
+    text-wrap: balance;
+  }
+
+  @media (min-width: 768px) {
+    .h1-page {
+      font-size: 38px;
+    }
+  }
+
+  /** H1 страницы-детали (университет, общежитие, статья) — 34px. */
+  .h1-detail {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 24px;
+    line-height: 1.25;
+    color: var(--color-ink);
+    margin: 0;
+    text-wrap: balance;
+  }
+
+  @media (min-width: 768px) {
+    .h1-detail {
+      font-size: 34px;
+    }
+  }
+
+  /** Заголовок секции: Unbounded 600, 32px (моб. 22px). §02 */
+  .h2 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 22px;
+    line-height: 1.25;
+    color: var(--color-ink);
+    margin: 0;
+  }
+
+  @media (min-width: 768px) {
+    .h2 {
+      font-size: 32px;
+    }
+  }
+
+  /** Заголовок внутри статьи/панели — 24px. */
+  .h2-sub {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 20px;
+    line-height: 1.3;
+    color: var(--color-ink);
+    margin: 0;
+  }
+
+  @media (min-width: 768px) {
+    .h2-sub {
+      font-size: 24px;
+    }
+  }
+
+  /** Заголовок карточки: Golos Text 600, 18px. §02 */
+  .h3 {
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 1.3;
+    color: var(--color-ink);
+    margin: 0;
+  }
+
+  @media (min-width: 768px) {
+    .h3 {
+      font-size: 18px;
+    }
+  }
+
+  /** Лид-абзац под заголовком: 18px (моб. 16px). §02 */
+  .lead {
+    font-size: 16px;
+    line-height: 1.55;
+    color: var(--color-body);
+    margin: 0;
+    text-wrap: pretty;
+  }
+
+  @media (min-width: 768px) {
+    .lead {
+      font-size: 18px;
+    }
+  }
+
+  /** Подписи, дисклеймеры: 13px. §02 */
+  .caption {
+    font-size: 13px;
+    line-height: 1.45;
+    color: var(--color-muted);
+  }
+
+  /** Цифра-метрика в hero и на детальных: Unbounded 600, синяя. */
+  .metric {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 20px;
+    line-height: 1.15;
+    color: var(--color-blue);
+  }
+
+  @media (min-width: 768px) {
+    .metric {
+      font-size: 26px;
+    }
+  }
+
+  /** Цена: Unbounded 600, 20px. */
+  .price {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 18px;
+    line-height: 1.2;
+    color: var(--color-ink);
+    white-space: nowrap;
+  }
+
+  @media (min-width: 768px) {
+    .price {
+      font-size: 20px;
+    }
+  }
+
+  /* --- Кнопки (§03) ------------------------------------------------------ */
+
+  /** База: пилюля 999px, высота 52px (compact 44px), Golos 600. */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    font-family: var(--font-sans);
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 1;
+    padding: 15px 30px;
+    border: 0;
+    border-radius: 999px;
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+    white-space: nowrap;
+    transition:
+      background-color 0.2s ease,
+      border-color 0.2s ease,
+      color 0.2s ease;
+  }
+
+  .btn:disabled,
+  .btn[aria-disabled='true'] {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+
+  /** Primary — жёлтая. Только главное действие страницы, 1–2 на экран. §03 */
+  .btn-primary {
+    background: var(--color-yellow);
+    color: var(--color-ink);
+  }
+
+  .btn-primary:hover {
+    background: var(--color-yellow-dark);
+    color: var(--color-ink);
+  }
+
+  /** Secondary — синяя. */
+  .btn-secondary {
+    background: var(--color-blue);
+    color: #fff;
+  }
+
+  .btn-secondary:hover {
+    background: var(--color-blue-dark);
+    color: #fff;
+  }
+
+  /** Ghost — рамка 2px. */
+  .btn-ghost {
+    background: transparent;
+    color: var(--color-ink);
+    border: 2px solid var(--color-border);
+    padding: 13px 28px;
+  }
+
+  .btn-ghost:hover {
+    border-color: var(--color-blue);
+    color: var(--color-blue);
+  }
+
+  /** Ghost на тёмном фоне. */
+  .btn-ghost-ink {
+    background: transparent;
+    color: #fff;
+    border: 2px solid rgb(255 255 255 / 0.25);
+    padding: 13px 26px;
+    font-size: 15px;
+  }
+
+  .btn-ghost-ink:hover {
+    border-color: #fff;
+    color: #fff;
+  }
+
+  /** Compact — для карточек: 14px, рамка 1px. §03 */
+  .btn-compact {
+    background: transparent;
+    color: var(--color-blue);
+    border: 1px solid var(--color-border-blue);
+    font-size: 14px;
+    padding: 10px 20px;
+  }
+
+  .btn-compact:hover {
+    border-color: var(--color-blue);
+    color: var(--color-blue);
+  }
+
+  /** Растянуть кнопку на всю ширину (карточки, мобильные CTA). */
+  .btn-block {
+    display: flex;
+    width: 100%;
+  }
+
+  /** Текстовая ссылка «Все программы →». */
+  .link-more {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+    font-size: 15px;
+    color: var(--color-blue);
+    text-decoration: none;
+  }
+
+  .link-more:hover {
+    color: var(--color-blue-dark);
+  }
+
+  /* --- Поля ввода (§04) -------------------------------------------------- */
+
+  /** Лейбл поля: 14px/600. */
+  .field-label {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--color-ink);
+  }
+
+  /** Поле: высота 48px, радиус 12px, рамка Border, фокус — синий. */
+  .field {
+    display: block;
+    width: 100%;
+    height: 48px;
+    padding: 0 16px;
+    font-family: var(--font-sans);
+    font-size: 15px;
+    color: var(--color-ink);
+    background: #fff;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-field);
+    outline: none;
+    transition: border-color 0.15s ease;
+  }
+
+  .field:focus {
+    border-color: var(--color-blue);
+    /* кольцо снаружи, как в макетах форм: 3px подложки Tint */
+    box-shadow: 0 0 0 3px var(--color-tint);
+  }
+
+  /** Многострочное поле. */
+  .field-textarea {
+    height: auto;
+    min-height: 120px;
+    padding: 12px 16px;
+    line-height: 1.5;
+    resize: vertical;
+  }
+
+  /** Состояние ошибки. */
+  .field-error {
+    border-color: var(--color-danger);
+    background: var(--color-danger-bg);
+  }
+
+  .field-error:focus {
+    border-color: var(--color-danger);
+    box-shadow: inset 0 0 0 1px var(--color-danger);
+  }
+
+  /** Текст ошибки под полем. */
+  .field-message {
+    font-size: 12px;
+    color: var(--color-danger-strong);
+  }
+
+  /* --- Карточки и бейджи (§05) ------------------------------------------- */
+
+  /** Обычная карточка: радиус 20px, рамка Line вместо тени. */
+  .card {
+    background: var(--color-mist);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-card);
+    padding: 24px;
+  }
+
+  @media (min-width: 768px) {
+    .card {
+      padding: 28px 26px;
+    }
+  }
+
+  /** Карточка-«медиа»: белый фон, картинка под обрез сверху. */
+  .card-media {
+    background: #fff;
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-card);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .card-media:hover {
+    border-color: var(--color-border-blue);
+  }
+
+  /** Акцентная карточка — сплошной Primary Blue, цена жёлтым. §05 */
+  .card-accent {
+    background: var(--color-blue);
+    border: 1px solid var(--color-blue);
+    border-radius: var(--radius-card);
+    padding: 24px;
+    color: var(--color-on-blue);
+  }
+
+  @media (min-width: 768px) {
+    .card-accent {
+      padding: 28px 26px;
+    }
+  }
+
+  /** Карточка на тёмной секции: rgba(255,255,255,.05) + рамка .1. §05 */
+  .card-ink {
+    background: rgb(255 255 255 / 0.05);
+    border: 1px solid rgb(255 255 255 / 0.1);
+    border-radius: var(--radius-card);
+    padding: 24px;
+    color: var(--color-on-ink);
+  }
+
+  .card-ink-hover:hover {
+    background: rgb(255 255 255 / 0.09);
+    border-color: rgb(255 212 58 / 0.45);
+  }
+
+  /** Плавающая плашка поверх фото (hero). */
+  .card-float {
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: var(--shadow-float);
+    padding: 14px 18px;
+  }
+
+  /** Подложка иконки: квадрат с радиусом 12–14px в цвете Tint. */
+  .icon-box {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: var(--color-tint);
+  }
+
+  .icon-box-lg {
+    width: 52px;
+    height: 52px;
+    border-radius: var(--radius-icon);
+  }
+
+  .icon-box-yellow {
+    background: var(--color-tint-yellow);
+  }
+
+  .icon-box-on-blue {
+    background: rgb(255 255 255 / 0.15);
+  }
+
+  /** Бейдж-пилюля. */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--color-tint);
+    color: var(--color-blue);
+    font-size: 12px;
+    font-weight: 600;
+    padding: 6px 12px;
+    border-radius: 999px;
+  }
+
+  @media (min-width: 768px) {
+    .badge {
+      font-size: 13px;
+      padding: 7px 14px;
+    }
+  }
+
+  /** Бейдж-эйбров: caps + letter-spacing. */
+  .badge-caps {
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .badge-accent {
+    background: var(--color-yellow);
+    color: var(--color-ink);
+  }
+
+  .badge-ink {
+    background: var(--color-ink);
+    color: var(--color-yellow);
+  }
+
+  .badge-neutral {
+    background: transparent;
+    border: 1px solid var(--color-border);
+    color: var(--color-muted);
+    font-weight: 400;
+  }
+
+  /** Информационная врезка — подложка Tint, текст Blue Dark. */
+  .note {
+    background: var(--color-tint);
+    border-radius: 16px;
+    padding: 20px 22px;
+    font-size: 15px;
+    color: var(--color-blue-dark);
+  }
+
+  @media (min-width: 768px) {
+    .note {
+      padding: 22px 26px;
+    }
+  }
+
+  /** Тёмная CTA-полоса в конце внутренних страниц. */
+  .cta-band {
+    background: var(--color-ink);
+    border-radius: var(--radius-panel);
+    padding: 32px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+
+  @media (min-width: 768px) {
+    .cta-band {
+      flex-direction: row;
+      align-items: center;
+      gap: 32px;
+      padding: 40px 48px;
+    }
+  }
+
+  .cta-band-title {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 20px;
+    line-height: 1.3;
+    color: #fff;
+    margin: 0 0 6px 0;
+  }
+
+  @media (min-width: 768px) {
+    .cta-band-title {
+      font-size: 22px;
+    }
+  }
+
+  /* --- Аккордеон (Услуги, FAQ) ------------------------------------------- */
+
+  .accordion-item {
+    border: 1px solid var(--color-line);
+    border-radius: 18px;
+    background: #fff;
+    overflow: hidden;
+  }
+
+  .accordion-item[data-open='true'] {
+    border-color: var(--color-border-blue);
+  }
+
+  .accordion-trigger {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    padding: 20px 22px;
+    background: none;
+    border: 0;
+    cursor: pointer;
+    text-align: left;
+    font-family: var(--font-sans);
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 1.4;
+    color: var(--color-ink);
+  }
+
+  @media (min-width: 768px) {
+    .accordion-trigger {
+      padding: 22px 26px;
+    }
+  }
+
+  .accordion-panel {
+    padding: 0 22px 20px 22px;
+    font-size: 15px;
+    color: var(--color-muted);
+  }
+
+  @media (min-width: 768px) {
+    .accordion-panel {
+      padding: 0 26px 22px 26px;
+    }
+  }
+
+  /* --- Текст из CMS (richtext Strapi) ------------------------------------ */
+
+  .prose-ds {
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--color-body);
+  }
+
+  .prose-ds > * + * {
+    margin-top: 16px;
+  }
+
+  .prose-ds h2 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 21px;
+    line-height: 1.3;
+    color: var(--color-ink);
+    margin-top: 36px;
+    margin-bottom: 14px;
+  }
+
+  .prose-ds h3 {
+    font-family: var(--font-sans);
+    font-weight: 600;
+    font-size: 18px;
+    color: var(--color-ink);
+    margin-top: 28px;
+    margin-bottom: 10px;
+  }
+
+  .prose-ds a {
+    color: var(--color-blue);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .prose-ds a:hover {
+    color: var(--color-blue-dark);
+  }
+
+  .prose-ds strong,
+  .prose-ds b {
+    font-weight: 600;
+    color: var(--color-ink);
+  }
+
+  .prose-ds ul,
+  .prose-ds ol {
+    padding-left: 0;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .prose-ds ul > li {
+    position: relative;
+    padding-left: 18px;
+  }
+
+  .prose-ds ul > li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.62em;
+    width: 5px;
+    height: 5px;
+    border-radius: 999px;
+    background: var(--color-blue);
+  }
+
+  .prose-ds ol {
+    counter-reset: prose-ds-ol;
+  }
+
+  .prose-ds ol > li {
+    position: relative;
+    padding-left: 26px;
+    counter-increment: prose-ds-ol;
+  }
+
+  .prose-ds ol > li::before {
+    content: counter(prose-ds-ol) '.';
+    position: absolute;
+    left: 0;
+    font-weight: 600;
+    color: var(--color-blue);
+  }
+
+  .prose-ds blockquote {
+    background: var(--color-mist);
+    border-radius: 16px;
+    padding: 20px 22px;
+    font-size: 15px;
+    color: var(--color-muted);
+    font-family: var(--font-sans);
+  }
+
+  .prose-ds img {
+    border-radius: var(--radius-card);
+    max-width: 100%;
+    height: auto;
+  }
+
+  .prose-ds table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+
+  .prose-ds th,
+  .prose-ds td {
+    border-bottom: 1px solid var(--color-line);
+    padding: 10px 12px;
+    text-align: left;
+  }
+
+  .prose-ds th {
+    font-weight: 600;
+    color: var(--color-ink);
+  }
+}

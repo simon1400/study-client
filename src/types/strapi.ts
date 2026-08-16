@@ -98,7 +98,26 @@ export interface HomeService {
   title: string;
   content: string;
   url: string | null;
+  /** Цена в карточке программы на главной (редизайн). */
+  price: string | null;
+  /** Выделенная карточка — сплошной Primary Blue, цена жёлтым (стайлгайд §05). */
+  featured: boolean | null;
   image: StrapiMedia | null;
+}
+
+/** Цифра под первым экраном: 15+ лет опыта. */
+export interface HomeStat {
+  id: number;
+  value: string;
+  label: string;
+}
+
+/** Плашка поверх фото первого экрана. */
+export interface HomeHighlight {
+  id: number;
+  title: string;
+  text: string | null;
+  style: 'light' | 'yellow' | 'ink';
 }
 
 export interface HomeContactInfo {
@@ -127,9 +146,32 @@ export interface Menu extends StrapiEntity {
 export interface Homepage extends StrapiEntity {
   title: string;
   description: string | null;
+  heroBadge: string | null;
+  heroStats: HomeStat[];
+  heroHighlights: HomeHighlight[];
   homepageSteps: HomeStep[];
   ourServices: HomeService[];
   contactInfo: HomeContactInfo | null;
+}
+
+/** Отзыв студента или родителя — секция «Наши студенты уже в Чехии». */
+export interface Review extends StrapiEntity {
+  text: string;
+  name: string;
+  role: string | null;
+  photo: StrapiMedia | null;
+  rating: number | null;
+  order: number | null;
+}
+
+/** Плитка «Медиатеки» на главной (замена мёртвой ленты Instagram API v1). */
+export interface MediaItem extends StrapiEntity {
+  image: StrapiMedia | null;
+  caption: string | null;
+  kind: 'photo' | 'video';
+  url: string | null;
+  tall: boolean | null;
+  order: number | null;
 }
 
 export interface City extends StrapiEntity {
@@ -215,6 +257,24 @@ export interface FaqItem extends StrapiEntity {
 export interface Service extends StrapiEntity {
   title: string;
   description: string | null;
+  order: number | null;
+}
+
+/**
+ * Техническая страница из коллекции `page`: защита персональных данных, оферта,
+ * условия и всё, что редактор заведёт позже. Адрес — `/<slug>`, вёрстка общая.
+ */
+export interface InfoPage extends StrapiEntity {
+  title: string;
+  slug: string;
+  eyebrow: string | null;
+  lead: string | null;
+  content: string | null;
+  attachmentTitle: string | null;
+  attachmentSubtitle: string | null;
+  attachmentFile: StrapiMedia | null;
+  note: string | null;
+  showInFooter: boolean | null;
   order: number | null;
 }
 

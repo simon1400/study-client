@@ -1,86 +1,93 @@
 'use client';
 
-import '@/styles/legacy/user-form_footer.scss';
-import '@/styles/legacy/user-done.scss';
-import '@/styles/legacy/user-button_control_form.scss';
+import { useTranslations } from 'next-intl';
+import { Link } from '@/i18n/navigation';
+import { QUESTIONNAIRE_STEPS } from '@/lib/cabinet';
 
 /**
- * Мелочи, общие для форм анкеты: кнопка сохранения, экран «шаг заполнен»
- * и управление повторяемыми блоками. Разметка — из `routes/user/components/*`.
+ * Общая обвязка форм анкеты в стиле редизайна: сетка полей, нижняя панель
+ * с «Назад» и «Сохранить», управление повторяемыми блоками.
  */
 
-export function StepFooter({ onSave, saving, error }: { onSave: () => void; saving: boolean; error: boolean }) {
+/** Сетка полей шага: две колонки на десктопе, одна на мобильных. */
+export function StepGrid({ children }: { children: React.ReactNode }) {
+  return <div className="grid gap-4 md:grid-cols-2 md:gap-x-5">{children}</div>;
+}
+
+/**
+ * Низ карточки шага. «Назад» ведёт на предыдущую позицию анкеты,
+ * основная кнопка сохраняет и уводит дальше (на последнем шаге — в обзор).
+ */
+export function StepFooter({
+  position,
+  onSave,
+  saving,
+  error,
+}: {
+  position: number;
+  onSave: () => void;
+  saving: boolean;
+  error: boolean;
+}) {
+  const t = useTranslations('user.questionnaire');
+
   return (
-    <div className="form_footer">
-      {error ? (
-        <div className="uk-alert-danger" uk-alert="">
-          <p>Не удалось сохранить. Обновите страницу и попробуйте снова.</p>
-        </div>
-      ) : null}
-      <div className="uk-grid uk-child-width-1-2" uk-grid="">
-        <div />
-        <div>
-          <button className="uk-button uk-button-default" type="button" onClick={onSave} disabled={saving}>
-            Сохранить
-          </button>
-        </div>
+    <div className="-mx-6 mt-8 border-t border-line px-6 pt-5 md:-mx-8 md:px-8">
+      {error ? <p className="field-message mb-3">{t('saveError')}</p> : null}
+      <div className="flex items-center gap-3">
+        {position > 1 ? (
+          <Link
+            href={`/user/questionnaire/step-${position - 1}`}
+            className="btn btn-ghost !border !px-6 !py-3 !text-[15px]"
+          >
+            {t('back')}
+          </Link>
+        ) : null}
+        <button
+          type="button"
+          onClick={onSave}
+          disabled={saving}
+          className="btn btn-secondary ml-auto !px-7 !py-3 !text-[15px]"
+        >
+          {saving ? '…' : position === QUESTIONNAIRE_STEPS ? t('finish') : t('next')}
+        </button>
       </div>
     </div>
   );
 }
 
-/** Экран вместо формы, если шаг уже заполнен; «Изменить» возвращает форму. */
-export function StepDone({ onEdit }: { onEdit: () => void }) {
-  return (
-    <div className="content_panel">
-      <div className="panel_item panel_item_done uk-flex-middle uk-flex">
-        <div className="uk-flex uk-flex-center uk-flex-middle uk-width-1-1">
-          <div className="modal-done-wrap">
-            <div className="big-circle-done" />
-            <h2>Этот шаг анкеты заполнен!</h2>
-            <button className="button button_blue" type="button" onClick={onEdit}>
-              Изменить
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-/** «Добавить» / «Отмена» под повторяемым блоком (братья, сёстры, учебные заведения). */
+/** «Добавить» / «Удалить» под повторяемым блоком (братья, сёстры, учебные заведения). */
 export function ButtonControl({
   count,
   onAdd,
   onRemove,
+  addLabel,
 }: {
   count: number;
   onAdd: () => void;
   onRemove: () => void;
+  addLabel?: string;
 }) {
+  const t = useTranslations('user.questionnaire');
+
   return (
-    <div>
-      <div className="uk-grid uk-child-width-1-2">
-        <div />
-        <div>
-          <div className={`button_control_wrap ${count ? 'button_count' : ''}`}>
-            <div className="uk-grid uk-child-width-1-2">
-              {count ? (
-                <div>
-                  <button className="button_remove_item" type="button" onClick={onRemove}>
-                    Отмена
-                  </button>
-                </div>
-              ) : null}
-              <div>
-                <button className="button_add_item" type="button" onClick={onAdd}>
-                  Добавить
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+    <div className="flex flex-wrap gap-2.5 md:col-span-2">
+      <button
+        type="button"
+        onClick={onAdd}
+        className="hover:border-blue text-blue h-[42px] cursor-pointer rounded-full border border-dashed border-border bg-white px-5 text-sm font-semibold"
+      >
+        + {addLabel ?? t('add')}
+      </button>
+      {count ? (
+        <button
+          type="button"
+          onClick={onRemove}
+          className="text-faint hover:text-blue h-[42px] cursor-pointer rounded-full border-0 bg-transparent px-3 text-sm font-semibold"
+        >
+          {t('remove')}
+        </button>
+      ) : null}
     </div>
   );
 }

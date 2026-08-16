@@ -2,18 +2,43 @@
 
 import month from '@/data/month.json';
 import type { StepDate, StepPeriod } from '@/lib/questionnaire';
-import '@/styles/legacy/user-checkbox.scss';
 
 /**
- * Поля форм анкеты — перенос `routes/user/components/*` один в один.
- * Все они «управляемые снаружи»: значение и колбэк приходят из формы шага,
- * а `name`/`index` возвращаются обратно, чтобы форма знала, что менять
- * (в повторяемых блоках — братья, колледжи — index указывает на элемент массива).
+ * Поля форм анкеты в стиле редизайна (макет «Кабинет → Анкета»): лейбл сверху,
+ * поле 48px с радиусом 12px, сетка в две колонки.
+ *
+ * Пропсы намеренно оставлены прежними (`value` / `name` / `index` / `handle`),
+ * поэтому формы шагов не переписывались под новую вёрстку — сменились только
+ * сами поля. Всё, что шире одной колонки, помечается `full`.
  */
 
 const MONTHS = month as Record<string, string>;
 
 type Handle<T> = (value: T, name: string, index?: number) => void;
+
+/** Обёртка поля: лейбл + контрол; `full` растягивает на обе колонки. */
+function Cell({
+  label,
+  full,
+  htmlFor,
+  children,
+}: {
+  label?: string;
+  full?: boolean;
+  htmlFor?: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className={`grid content-start gap-1.5 ${full ? 'md:col-span-2' : ''}`}>
+      {label ? (
+        <label className="text-muted text-[13px] font-semibold" htmlFor={htmlFor}>
+          {label}
+        </label>
+      ) : null}
+      {children}
+    </div>
+  );
+}
 
 export function TextInput({
   label,
@@ -21,6 +46,7 @@ export function TextInput({
   value,
   name = '',
   index = 0,
+  full,
   handle,
 }: {
   label: string;
@@ -28,24 +54,19 @@ export function TextInput({
   value: string;
   name?: string;
   index?: number;
+  full?: boolean;
   handle: Handle<string>;
 }) {
   return (
-    <div className="form_item">
-      <div className="uk-grid uk-child-width-1-2" uk-grid="">
-        <div>
-          <label className="label_head">{label}</label>
-        </div>
-        <div>
-          <input
-            type="text"
-            placeholder={placeholder}
-            value={value}
-            onChange={(e) => handle(e.target.value, name, index)}
-          />
-        </div>
-      </div>
-    </div>
+    <Cell label={label} full={full}>
+      <input
+        type="text"
+        className="field"
+        placeholder={placeholder}
+        value={value}
+        onChange={(e) => handle(e.target.value, name, index)}
+      />
+    </Cell>
   );
 }
 
@@ -54,104 +75,86 @@ export function SelectInput({
   value,
   data,
   name,
+  full,
   handle,
 }: {
   label: string;
   value: string;
   data: Record<string, string>;
   name: string;
+  full?: boolean;
   handle: Handle<string>;
 }) {
   return (
-    <div className="form_item">
-      <div className="uk-grid uk-child-width-1-2" uk-grid="">
-        <div>
-          <label className="label_head">{label}</label>
-        </div>
-        <div className="uk-form-controls">
-          <div uk-form-custom="target: > * > span:first-child">
-            <select value={value} onChange={(e) => handle(e.target.value, name)}>
-              <option value="">Выберите...</option>
-              {Object.values(data).map((item) => (
-                <option key={item} value={item}>
-                  {item}
-                </option>
-              ))}
-            </select>
-            <button className="tm-select" type="button" tabIndex={-1}>
-              <span>{value}</span>
-              <span uk-icon="icon: chevron-down" />
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
+    <Cell label={label} full={full}>
+      <select className="field" value={value} onChange={(e) => handle(e.target.value, name)}>
+        <option value="">—</option>
+        {Object.values(data).map((item) => (
+          <option key={item} value={item}>
+            {item}
+          </option>
+        ))}
+      </select>
+    </Cell>
   );
 }
 
+/**
+ * Дата тремя контролами (день / месяц / год) — так она и лежит в анкете
+ * (`{day, month, year}`), менять формат нельзя: мигрированные анкеты сломаются.
+ */
 export function DateInput({
   label,
   value,
   name = '',
   index = 0,
+  full,
   handle,
 }: {
   label: string;
   value: StepDate;
   name?: string;
   index?: number;
+  full?: boolean;
   handle: Handle<StepDate>;
 }) {
   return (
-    <div className="form_item">
-      <div className="uk-grid uk-child-width-1-2" uk-grid="">
-        <div>
-          <label className="label_head">{label}</label>
-        </div>
-        <div>
-          <div className="tm-date-input uk-form-controls uk-grid uk-grid-collapse" uk-grid="">
-            <div className="uk-width-1-4">
-              <input
-                className="uk-input"
-                type="text"
-                placeholder="04"
-                value={value.day}
-                onChange={(e) => handle({ ...value, day: e.target.value }, name, index)}
-              />
-            </div>
-            <div className="uk-width-1-2" uk-form-custom="target: > * > span:first-child">
-              <select
-                value={value.month}
-                onChange={(e) => handle({ ...value, month: e.target.value }, name, index)}
-              >
-                <option value="">Выберите...</option>
-                {Object.keys(MONTHS).map((key) => (
-                  <option key={key} value={Number(key) < 10 ? `0${key}` : key}>
-                    {MONTHS[key]}
-                  </option>
-                ))}
-              </select>
-              <button className="tm-select" type="button" tabIndex={-1}>
-                <span>{value.month}</span>
-                <span uk-icon="icon: chevron-down" />
-              </button>
-            </div>
-            <div className="uk-width-1-4">
-              <input
-                className="uk-input"
-                type="text"
-                placeholder="1996"
-                value={value.year}
-                onChange={(e) => handle({ ...value, year: e.target.value }, name, index)}
-              />
-            </div>
-          </div>
-        </div>
+    <Cell label={label} full={full}>
+      <div className="grid grid-cols-[1fr_1.6fr_1.2fr] gap-2">
+        <input
+          type="text"
+          className="field !px-3"
+          placeholder="04"
+          inputMode="numeric"
+          value={value.day}
+          onChange={(e) => handle({ ...value, day: e.target.value }, name, index)}
+        />
+        <select
+          className="field !px-2"
+          value={value.month}
+          onChange={(e) => handle({ ...value, month: e.target.value }, name, index)}
+        >
+          <option value="">—</option>
+          {Object.keys(MONTHS).map((key) => (
+            <option key={key} value={Number(key) < 10 ? `0${key}` : key}>
+              {MONTHS[key]}
+            </option>
+          ))}
+        </select>
+        <input
+          type="text"
+          className="field !px-3"
+          placeholder="2007"
+          inputMode="numeric"
+          value={value.year}
+          onChange={(e) => handle({ ...value, year: e.target.value }, name, index)}
+        />
       </div>
-    </div>
+    </Cell>
   );
 }
 
+/** Пол — сегментированный переключатель из макета. */
 export function SexInput({
   value,
   name,
@@ -163,42 +166,27 @@ export function SexInput({
   id: string;
   handle: Handle<string>;
 }) {
+  const options = ['Мужской', 'Женский'];
+
   return (
-    <div className="form_item">
-      <div className="uk-grid uk-child-width-1-2" uk-grid="">
-        <div>
-          <label className="label_head">Пол:</label>
-        </div>
-        <div>
-          <div className="tm-radio uk-form-controls uk-grid uk-grid-collapse uk-child-width-1-2" uk-grid="">
-            <div>
-              <input
-                className="uk-radio"
-                type="radio"
-                id={`${id}_1`}
-                value="Мужской"
-                checked={value === 'Мужской'}
-                onChange={(e) => handle(e.target.value, name)}
-                name={`sex_${id}`}
-              />
-              <label htmlFor={`${id}_1`}>Мужской</label>
-            </div>
-            <div>
-              <input
-                className="uk-radio"
-                type="radio"
-                id={`${id}_2`}
-                value="Женский"
-                checked={value === 'Женский'}
-                onChange={(e) => handle(e.target.value, name)}
-                name={`sex_${id}`}
-              />
-              <label htmlFor={`${id}_2`}>Женский</label>
-            </div>
-          </div>
-        </div>
+    <Cell label="Пол">
+      <div className="flex h-12 overflow-hidden rounded-xl border border-border">
+        {options.map((option) => (
+          <button
+            key={option}
+            type="button"
+            id={`${id}_${option}`}
+            aria-pressed={value === option}
+            onClick={() => handle(option, name)}
+            className={`flex-1 cursor-pointer border-0 text-sm font-semibold transition-colors ${
+              value === option ? 'bg-blue text-white' : 'text-muted bg-white hover:text-ink'
+            }`}
+          >
+            {option}
+          </button>
+        ))}
       </div>
-    </div>
+    </Cell>
   );
 }
 
@@ -214,22 +202,17 @@ export function CheckboxInput({
   handle: Handle<boolean>;
 }) {
   return (
-    <div className="form_item_checkbox">
-      <div className="uk-grid uk-child-width-1-2" uk-grid="">
-        <div />
-        <div>
-          <label>
-            <input
-              className="uk-checkbox"
-              name={name}
-              type="checkbox"
-              checked={value}
-              onChange={() => handle(!value, name)}
-            />
-            {label}
-          </label>
-        </div>
-      </div>
+    <div className="text-body flex items-center md:col-span-2">
+      <label className="flex cursor-pointer items-center gap-2.5 text-sm">
+        <input
+          type="checkbox"
+          name={name}
+          checked={value}
+          onChange={() => handle(!value, name)}
+          className="accent-blue h-[18px] w-[18px]"
+        />
+        {label}
+      </label>
     </div>
   );
 }
@@ -239,70 +222,58 @@ export function PeriodInput({
   value,
   name = '',
   index = 0,
+  full,
   handle,
 }: {
   label: string;
   value: StepPeriod;
   name?: string;
   index?: number;
+  full?: boolean;
   handle: Handle<StepPeriod>;
 }) {
   return (
-    <div className="form_item">
-      <div className="uk-grid uk-child-width-1-2" uk-grid="">
-        <div>
-          <label className="label_head">{label}</label>
-        </div>
-        <div>
-          <div className="form-period">
-            <div className="uk-grid uk-child-width-1-2">
-              <div>
-                <input
-                  type="text"
-                  placeholder="2016"
-                  value={value.od}
-                  onChange={(e) => handle({ ...value, od: e.target.value }, name, index)}
-                />
-              </div>
-              <div>
-                <input
-                  type="text"
-                  className="period_input"
-                  placeholder="2018"
-                  value={value.do}
-                  onChange={(e) => handle({ ...value, do: e.target.value }, name, index)}
-                />
-              </div>
-            </div>
-          </div>
-        </div>
+    <Cell label={label} full={full}>
+      <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2">
+        <input
+          type="text"
+          className="field !px-3"
+          placeholder="2016"
+          inputMode="numeric"
+          value={value.od}
+          onChange={(e) => handle({ ...value, od: e.target.value }, name, index)}
+        />
+        <span className="text-faint">—</span>
+        <input
+          type="text"
+          className="field !px-3"
+          placeholder="2027"
+          inputMode="numeric"
+          value={value.do}
+          onChange={(e) => handle({ ...value, do: e.target.value }, name, index)}
+        />
       </div>
-    </div>
+    </Cell>
   );
 }
 
 /** Подзаголовок внутри формы («Отец», «Братья», «Среднее образование»). */
 export function FormHead({ head }: { head: string }) {
   return (
-    <div className="form_item">
-      <div className="uk-grid uk-child-width-1-2" uk-grid="">
-        <div />
-        <div>
-          <h2 className="form_head">{head}</h2>
-        </div>
-      </div>
-    </div>
+    <h2 className="font-display text-ink mt-2 mb-0 text-[15px] font-semibold md:col-span-2">{head}</h2>
   );
 }
 
 /** Разделитель между повторяющимися блоками. */
 export function FormHr() {
+  return <hr className="my-1 border-0 border-t border-line md:col-span-2" />;
+}
+
+/** Подсказка-врезка внутри шага (в макете — серая или синяя плашка). */
+export function FormNote({ children, accent }: { children: React.ReactNode; accent?: boolean }) {
   return (
-    <div className="uk-grid uk-child-width-1-2">
-      <div />
-      <div>
-        <hr className="uk-margin-top uk-margin-medium-bottom" style={{ maxWidth: '260px' }} />
-      </div>
-    </div>
+    <p className={`m-0 rounded-xl px-4 py-3 text-[13px] md:col-span-2 ${accent ? 'bg-tint text-blue-dark' : 'bg-mist text-muted'}`}>
+      {children}
+    </p>
   );
 }

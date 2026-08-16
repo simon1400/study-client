@@ -1,59 +1,39 @@
-/* eslint-disable @next/next/no-img-element -- статика из public/, размеры задаёт SCSS */
-import { Link } from '@/i18n/navigation';
+import { getTranslations } from 'next-intl/server';
 import { getCollection, getSingle } from '@/lib/strapi';
 import { strapiLocale } from '@/i18n/routing';
 import type { Global, Menu } from '@/types/strapi';
-import HeaderNav from './HeaderNav';
-import HeaderAuth from '@/components/auth/HeaderAuth';
+import HeaderClient, { type NavItem } from './HeaderClient';
 
+/**
+ * Шапка: данные из Strapi (меню `menu_top` и контакты из `global`), разметка —
+ * в клиентском HeaderClient (выпадашки, гамбургер, переключатель языков).
+ *
+ * Раскладка по макету редизайна: «Главная» + первые три пункта меню видны всегда,
+ * остальные уезжают в выпадашку «Ещё» вместе с FAQ и контактами.
+ */
 export default async function Header({ locale }: { locale: string }) {
   const strapi = strapiLocale(locale);
-  const [menus, global] = await Promise.all([
+  const [menus, global, t] = await Promise.all([
     getCollection<Menu>('menus', {
       locale: strapi,
       query: { filters: { location: { $eq: 'menu_top' } }, sort: ['location:asc'], populate: '*' },
     }),
     getSingle<Global>('global', { locale: strapi, query: { populate: '*' } }),
+    getTranslations({ locale }),
   ]);
 
   const items = menus[0]?.items ?? [];
-  const contacts = global?.contacts;
 
-  return (
-    <header>
-      <div className="header-top">
-        <div className="uk-container uk-flex uk-flex-between uk-flex-wrap">
-          <Link href="/" className="logo">
-            <img src="/logo_ru.svg" alt="Logo" />
-          </Link>
+  const main: NavItem[] = [{ id: 'home', title: t('nav.home'), url: '/' }, ...items.slice(0, 3)];
 
-          <HeaderNav items={items} />
-        </div>
-      </div>
-
-      <div className="header_bottom uk-visible@s">
-        <div className="uk-container ">
-          <div className="uk-grid">
-            <div className="uk-width-2-3@s">
-              {contacts?.phone ? (
-                <a href={`tel:${contacts.phone}`} className="contact-info-top">
-                  <span className="tm-icons tm-icon-phone" />
-                  {contacts.phone}
-                </a>
-              ) : null}
-              {contacts?.email ? (
-                <a href={`mailto:${contacts.email}`} className="contact-info-top">
-                  <span className="tm-icons tm-icon-envelope" />
-                  {contacts.email}
-                </a>
-              ) : null}
-            </div>
-            <div className="uk-text-right uk-width-1-3@s">
-              <HeaderAuth />
-            </div>
-          </div>
-        </div>
-      </div>
-    </header>
+  const more: NavItem[] = [
+    ...items.slice(3),
+    { id: 'faq', title: t('common.faq'), url: '/faq' },
+    { id: 'contacts', title: t('nav.contacts'), url: '/contacts' },
+  ].filter(
+    // если такой адрес уже есть в меню Strapi — не дублируем
+    (item, index, all) => all.findIndex((other) => other.url === item.url) === index
   );
+
+  return <HeaderClient locale={locale} main={main} more={more} phone={global?.contacts?.phone ?? null} />;
 }

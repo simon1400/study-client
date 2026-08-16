@@ -2,6 +2,7 @@ import { cookies } from 'next/headers';
 import { AUTH_COOKIE } from './auth-cookie';
 import type { Questionnaire } from './questionnaire';
 import type { AccountUser } from '@/types/account';
+import type { BankDetails, ContractView } from '@/types/contract';
 
 export type { AccountUser };
 
@@ -64,6 +65,24 @@ export async function getSession(): Promise<AccountUser | null> {
 
   const { ok, data } = await strapiAuthFetch<{ user: AccountUser }>('/account/me', { token });
   return ok && data?.user ? data.user : null;
+}
+
+/**
+ * Договор пользователя: шаблон из CMS с подставленными программой и суммами,
+ * плюс реквизиты для перевода. Шаблон закрыт от анонимов — в нём банковские данные.
+ */
+export async function getContract(locale: string): Promise<{
+  contract: ContractView | null;
+  bank: BankDetails | null;
+} | null> {
+  const token = await getToken();
+  if (!token) return null;
+
+  const { ok, data } = await strapiAuthFetch<{ contract: ContractView | null; bank: BankDetails | null }>(
+    `/account/contract?locale=${encodeURIComponent(locale)}`,
+    { token }
+  );
+  return ok && data ? { contract: data.contract ?? null, bank: data.bank ?? null } : null;
 }
 
 /** Профиль + анкета одним запросом (анкета заводится на сервере, если её ещё нет). */

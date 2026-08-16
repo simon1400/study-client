@@ -9,7 +9,7 @@ export async function PUT(request: Request) {
   const token = await getToken();
   if (!token) return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
 
-  let body: { step?: number; data?: unknown };
+  let body: { step?: number; position?: number; data?: unknown };
   try {
     body = await request.json();
   } catch {
@@ -27,7 +27,9 @@ export async function PUT(request: Request) {
   const { ok, status, data } = await strapiAuthFetch<{ user: AccountUser }>('/account/questionnaire', {
     token,
     method: 'PUT',
-    body: { step, data: body.data },
+    // position — место шага в интерфейсе; по нему Strapi двигает прогресс,
+    // потому что в редизайне порядок экранов отличается от нумерации полей
+    body: { step, position: Number(body.position) || step, data: body.data },
   });
 
   if (!ok || !data?.user) {

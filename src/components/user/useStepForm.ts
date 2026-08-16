@@ -2,31 +2,34 @@
 
 import { useCallback, useState } from 'react';
 import { useRouter } from '@/i18n/navigation';
+import { QUESTIONNAIRE_STEPS } from '@/lib/cabinet';
 import type { StepNumber } from '@/lib/questionnaire';
 
 /**
  * Общее поведение всех шести форм анкеты: локальное состояние, сохранение и
  * переход дальше.
  *
- * Куда двигать прогресс, решает Strapi — сюда приходит только «получилось/нет».
- * Старый `form_footer` считал это на клиенте по данным из localStorage и умел
- * откатить прогресс назад при правке уже заполненного шага.
+ * `step` — ключ хранения в Strapi (`stepN`), `position` — место шага в интерфейсе.
+ * В редизайне они разошлись: макет ставит «Адрес и контакты» третьим, а в базе
+ * это по-прежнему `step5`. Прогресс (`stepQuestionare`) считается по позиции —
+ * иначе после третьего экрана он перепрыгивал бы в конец.
+ *
+ * Экрана «шаг заполнен» больше нет: форма всегда доступна для правки,
+ * а закрытые шаги отмечены галочками в боковой навигации.
  */
 export function useStepForm<T extends object>({
   step,
-  stepQuestionare,
+  position,
   initial,
 }: {
   step: StepNumber;
-  /** Прогресс пользователя: если он больше номера шага, шаг уже заполнен. */
-  stepQuestionare: number;
+  position: number;
   initial: T;
 }) {
   const router = useRouter();
   const [state, setState] = useState<T>(initial);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState(false);
-  const [done, setDone] = useState(stepQuestionare > step);
 
   /** Обработчик для полей: они возвращают значение и имя, индекс — для массивов. */
   const handleInput = useCallback((value: unknown, name: string) => {
@@ -40,16 +43,13 @@ export function useStepForm<T extends object>({
       const res = await fetch('/api/account/questionnaire', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ step, data: state }),
+        body: JSON.stringify({ step, position, data: state }),
       });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
-      // шаг заполняется впервые — ведём дальше по анкете, как на старом сайте
-      if (stepQuestionare <= step) {
-        router.push(step === 6 ? '/user/personal-area' : `/user/questionnaire/step-${step + 1}`);
-      } else {
-        setDone(true);
-      }
+      router.push(
+        position === QUESTIONNAIRE_STEPS ? '/user' : `/user/questionnaire/step-${position + 1}`
+      );
       router.refresh();
     } catch {
       setError(true);
@@ -58,15 +58,5 @@ export function useStepForm<T extends object>({
     }
   }
 
-  return {
-    state,
-    setState,
-    handleInput,
-    save,
-    saving,
-    error,
-    /** true — показываем экран «шаг заполнен» вместо формы. */
-    done,
-    edit: () => setDone(false),
-  };
+  return { state, setState, handleInput, save, saving, error, position };
 }

@@ -1,12 +1,12 @@
 'use client';
 
+import { Fragment } from 'react';
 import { DateInput, FormHead, FormHr, TextInput } from '../fields';
-import { ButtonControl, StepDone, StepFooter } from '../StepChrome';
-import Preload from '../Preload';
+import { ButtonControl, StepFooter, StepGrid } from '../StepChrome';
 import { useStepForm } from '../useStepForm';
 import { emptyRelative, type Relative, type Step3 } from '@/lib/questionnaire';
 
-/** Шаг 3 — семья: родители плюс произвольное число братьев и сестёр. */
+/** Семья (в базе — `step3`): родители плюс произвольное число братьев и сестёр. */
 
 type RelativeKey = 'brothers' | 'sisters';
 
@@ -22,29 +22,12 @@ function ParentFields({
 }) {
   return (
     <>
-      <TextInput
-        label="Имя:"
-        placeholder="Дмитрий"
-        name={`name${suffix}`}
-        value={state[`name${suffix}`]}
-        handle={handle}
-      />
-      <TextInput
-        label="Фамилия:"
-        placeholder="Печунка"
-        name={`surname${suffix}`}
-        value={state[`surname${suffix}`]}
-        handle={handle}
-      />
-      <DateInput
-        label="Дата рождения:"
-        name={`dateBirth${suffix}`}
-        value={state[`dateBirth${suffix}`]}
-        handle={handle}
-      />
-      <TextInput label="Гражданство:" name={`citizenship${suffix}`} value={state[`citizenship${suffix}`]} handle={handle} />
-      <TextInput label="Адрес прописки:" name={`address${suffix}`} value={state[`address${suffix}`]} handle={handle} />
-      <TextInput label="Профессия:" name={`profession${suffix}`} value={state[`profession${suffix}`]} handle={handle} />
+      <TextInput label="Имя" placeholder="Дмитрий" name={`name${suffix}`} value={state[`name${suffix}`]} handle={handle} />
+      <TextInput label="Фамилия" placeholder="Печунка" name={`surname${suffix}`} value={state[`surname${suffix}`]} handle={handle} />
+      <DateInput label="Дата рождения" name={`dateBirth${suffix}`} value={state[`dateBirth${suffix}`]} handle={handle} />
+      <TextInput label="Гражданство" name={`citizenship${suffix}`} value={state[`citizenship${suffix}`]} handle={handle} />
+      <TextInput label="Профессия" name={`profession${suffix}`} value={state[`profession${suffix}`]} handle={handle} />
+      <TextInput label="Адрес проживания" full name={`address${suffix}`} value={state[`address${suffix}`]} handle={handle} />
     </>
   );
 }
@@ -61,25 +44,18 @@ function RelativeFields({
 }) {
   return (
     <>
-      <TextInput label="Имя:" placeholder="Дмитрий" name="name" index={index} value={value.name} handle={handle} />
-      <TextInput
-        label="Фамилия:"
-        placeholder="Печунка"
-        name="surname"
-        index={index}
-        value={value.surname}
-        handle={handle}
-      />
-      <DateInput label="Дата рождения:" name="dateBirth" index={index} value={value.dateBirth} handle={handle} />
-      <TextInput label="Гражданство:" name="citizenship" index={index} value={value.citizenship} handle={handle} />
-      <TextInput label="Адрес прописки:" name="address" index={index} value={value.address} handle={handle} />
-      <TextInput label="Профессия:" name="profession" index={index} value={value.profession} handle={handle} />
+      <TextInput label="Имя" placeholder="Дмитрий" name="name" index={index} value={value.name} handle={handle} />
+      <TextInput label="Фамилия" placeholder="Печунка" name="surname" index={index} value={value.surname} handle={handle} />
+      <DateInput label="Дата рождения" name="dateBirth" index={index} value={value.dateBirth} handle={handle} />
+      <TextInput label="Гражданство" name="citizenship" index={index} value={value.citizenship} handle={handle} />
+      <TextInput label="Профессия" name="profession" index={index} value={value.profession} handle={handle} />
+      <TextInput label="Адрес проживания" full name="address" index={index} value={value.address} handle={handle} />
     </>
   );
 }
 
-export default function Step3Form({ initial, stepQuestionare }: { initial: Step3; stepQuestionare: number }) {
-  const form = useStepForm<Step3>({ step: 3, stepQuestionare, initial });
+export default function Step3Form({ initial, position }: { initial: Step3; position: number }) {
+  const form = useStepForm<Step3>({ step: 3, position, initial });
   const { state, setState, handleInput } = form;
 
   /** Правка одного поля у брата/сестры под индексом. */
@@ -106,11 +82,9 @@ export default function Step3Form({ initial, stepQuestionare }: { initial: Step3
     }));
   };
 
-  if (form.done) return <StepDone onEdit={form.edit} />;
-
   return (
-    <div className="content_panel">
-      <div className="panel_item">
+    <>
+      <StepGrid>
         <FormHead head="Отец" />
         <ParentFields suffix="Father" state={state} handle={handleInput} />
 
@@ -119,33 +93,33 @@ export default function Step3Form({ initial, stepQuestionare }: { initial: Step3
 
         <FormHead head="Братья" />
         {state.brothers.map((item, index) => (
-          <div key={`brother-${index}`}>
+          <Fragment key={`brother-${index}`}>
             {index ? <FormHr /> : null}
             <RelativeFields value={item} index={index} handle={handleRelative('brothers')} />
-          </div>
+          </Fragment>
         ))}
         <ButtonControl
           count={state.brothers.length}
+          addLabel="Добавить брата"
           onAdd={addRelative('brothers', 'countBrother')}
           onRemove={removeRelative('brothers', 'countBrother')}
         />
 
-        <FormHead head="Сестры" />
+        <FormHead head="Сёстры" />
         {state.sisters.map((item, index) => (
-          <div key={`sister-${index}`}>
+          <Fragment key={`sister-${index}`}>
             {index ? <FormHr /> : null}
             <RelativeFields value={item} index={index} handle={handleRelative('sisters')} />
-          </div>
+          </Fragment>
         ))}
         <ButtonControl
           count={state.sisters.length}
+          addLabel="Добавить сестру"
           onAdd={addRelative('sisters', 'countSister')}
           onRemove={removeRelative('sisters', 'countSister')}
         />
-
-        <StepFooter onSave={form.save} saving={form.saving} error={form.error} />
-        {form.saving ? <Preload /> : null}
-      </div>
-    </div>
+      </StepGrid>
+      <StepFooter position={position} onSave={form.save} saving={form.saving} error={form.error} />
+    </>
   );
 }
