@@ -15,6 +15,15 @@ const USER_AREA = new RegExp(`^/(?:(?:${routing.locales.join('|')})/)?user(?:/|$
  * отправляет на главную. Middleware лишь отсекает заведомо чужих до рендера.
  */
 export default function middleware(request: NextRequest) {
+  // чешская локаль убрана — старые адреса /cz/... ведём на русскую версию,
+  // иначе next-intl отдал бы на них 404
+  const { pathname } = request.nextUrl;
+  if (pathname === '/cz' || pathname.startsWith('/cz/')) {
+    const url = request.nextUrl.clone();
+    url.pathname = pathname.slice(3) || '/';
+    return NextResponse.redirect(url, 308);
+  }
+
   if (USER_AREA.test(request.nextUrl.pathname) && !request.cookies.get(AUTH_COOKIE)?.value) {
     const url = request.nextUrl.clone();
     url.pathname = '/';

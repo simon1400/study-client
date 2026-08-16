@@ -1,26 +1,25 @@
 import { defineRouting } from 'next-intl/routing';
 
 /**
- * Языки редизайна: переключатель в шапке — RU / UA / CZ / EN.
- * `localePrefix: 'as-needed'` — русские адреса остаются без префикса, 1:1 со старым
- * сайтом, остальные получают /uk, /cz, /en.
+ * Языки сайта: переключатель в шапке — UA / RU / EN.
+ * Основной язык с 2026-08-16 — украинский: `localePrefix: 'as-needed'` оставляет
+ * его адреса без префикса, русский и английский получают /ru и /en.
  *
  * Контент в Strapi заполнен пока только в `ru`; если перевода нет, `src/lib/strapi.ts`
  * молча отдаёт русскую версию (см. FALLBACK_LOCALE), поэтому пустых страниц не бывает.
  */
 export const routing = defineRouting({
-  locales: ['ru', 'uk', 'cz', 'en'],
-  defaultLocale: 'ru',
+  locales: ['uk', 'ru', 'en'],
+  defaultLocale: 'uk',
   localePrefix: 'as-needed',
 });
 
 export type Locale = (typeof routing.locales)[number];
 
-/** Локаль в URL → код локали в Strapi (чешский там ISO-шный `cs`). */
+/** Локаль в URL → код локали в Strapi (совпадают, но маппинг оставлен точкой входа). */
 const LOCALE_TO_STRAPI: Record<string, string> = {
-  ru: 'ru',
   uk: 'uk',
-  cz: 'cs',
+  ru: 'ru',
   en: 'en',
 };
 
@@ -30,13 +29,7 @@ export function strapiLocale(locale: string): string {
 
 /** Подписи в переключателе языков — на своём же языке. */
 export const LOCALE_LABELS: Record<Locale, { short: string; full: string }> = {
-  ru: { short: 'RU', full: 'Русский' },
   uk: { short: 'UA', full: 'Українська' },
-  cz: { short: 'CZ', full: 'Čeština' },
+  ru: { short: 'RU', full: 'Русский' },
   en: { short: 'EN', full: 'English' },
 };
-
-/** Значение атрибута lang у <html> (в URL `cz`, по стандарту — `cs`). */
-export function htmlLang(locale: string): string {
-  return locale === 'cz' ? 'cs' : locale;
-}

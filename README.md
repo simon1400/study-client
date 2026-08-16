@@ -24,9 +24,10 @@ npm run typecheck            # tsc --noEmit
   `/`, `/program`, `/program/[slug]`, `/university`, `/university/[slug]`, `/living`,
   `/living/[slug]`, `/blog`, `/blog/[slug]`, `/agents`, `/contacts`, `/services`,
   `/faq`, `/partners`.
-- `src/i18n/routing.ts` — список активных локалей. Сейчас только `ru` (в Strapi
-  заполнена только она); добавление `uk`/`cz`/`en` включает остальные, `cz` в URL
-  маппится на локаль `cs` в Strapi.
+- `src/i18n/routing.ts` — список активных локалей: `uk` (основная, без префикса
+  в URL), `ru`, `en`. Коды в URL и в Strapi совпадают. Контент в Strapi заполнен
+  пока только в `ru`, остальные локали отдают его же по фолбэку
+  (`FALLBACK_LOCALE` в `src/lib/strapi.ts`).
 - `src/lib/strapi.ts` — запросы к content-api: `getCollection`, `getBySlug`,
   `getSingle`, `mediaUrl`. Токен не нужен — public-роли выданы права на чтение
   (`study-strapi/scripts/setup-permissions.js`), анониму отдаётся только published.

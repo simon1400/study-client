@@ -68,8 +68,7 @@ export function formatDate(value: string | null | undefined, locale: string): st
   if (!value) return null;
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return null;
-  const intlLocale = locale === 'cz' ? 'cs' : locale;
-  return new Intl.DateTimeFormat(intlLocale, { day: 'numeric', month: 'long', year: 'numeric' }).format(date);
+  return new Intl.DateTimeFormat(locale, { day: 'numeric', month: 'long', year: 'numeric' }).format(date);
 }
 
 /** Сумма прописью для кабинета: 4699 → «4 699 €». */

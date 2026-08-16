@@ -3,7 +3,7 @@ import { GoogleTagManager } from '@next/third-parties/google';
 import { notFound } from 'next/navigation';
 import { hasLocale, NextIntlClientProvider } from 'next-intl';
 import { setRequestLocale } from 'next-intl/server';
-import { htmlLang, routing, strapiLocale } from '@/i18n/routing';
+import { routing, strapiLocale } from '@/i18n/routing';
 import { fontVariables } from '@/lib/fonts';
 import { getSingle } from '@/lib/strapi';
 import type { Global } from '@/types/strapi';
@@ -74,7 +74,7 @@ export default async function LocaleLayout({
   setRequestLocale(locale);
 
   return (
-    <html lang={htmlLang(locale)} className={fontVariables}>
+    <html lang={locale} className={fontVariables}>
       <body className="ds">
         {/* Google Tag Manager и Яндекс.Метрика — те же счётчики, что в старом public/index.html */}
         <script dangerouslySetInnerHTML={{ __html: CONSENT_DEFAULT_JS }} />

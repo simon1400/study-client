@@ -4,7 +4,8 @@ import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { Link } from '@/i18n/navigation';
 import { strapiLocale } from '@/i18n/routing';
 import { getCollection, getSingle, mediaUrl } from '@/lib/strapi';
-import type { Global, Homepage, MediaItem, Review } from '@/types/strapi';
+import type { Global, HomeService, Homepage, MediaItem, Review } from '@/types/strapi';
+import Html from '@/components/Html';
 import CallForm from '@/components/home/CallForm';
 import MapSection from '@/components/home/MapSection';
 import FormCtaButton from '@/components/FormCtaButton';
@@ -20,6 +21,18 @@ const SERVICE_ICONS = [
 
 const serviceIcon = (index: number, white: boolean) =>
   `/ikony/${SERVICE_ICONS[index % SERVICE_ICONS.length]}-${white ? 'white' : 'new'}.svg`;
+
+/**
+ * Блок «Что мы предлагаем»: три программы плюс карточка дополнительных услуг
+ * (`/services`) — она всегда последняя в ряду, где бы ни стояла в CMS.
+ * Исходный индекс тащим с собой: по нему выбирается иконка.
+ */
+function programCards(services: HomeService[]) {
+  const all = services.map((item, index) => ({ item, index }));
+  const extra = all.find(({ item }) => item.url?.replace(/\/+$/, '').endsWith('/services'));
+  if (!extra) return all.slice(0, 4);
+  return [...all.filter((card) => card !== extra).slice(0, 3), extra];
+}
 
 async function getHomepage(locale: string) {
   return getSingle<Homepage>('homepage', {
@@ -127,7 +140,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
             </div>
 
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 lg:gap-5">
-              {data.ourServices.map((item, index) => {
+              {programCards(data.ourServices).map(({ item, index }) => {
                 const featured = Boolean(item.featured);
                 return (
                   <div key={item.id} className={`${featured ? 'card-accent' : 'card'} flex flex-col`}>
@@ -300,9 +313,11 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
             <div className="rounded-hero from-blue to-blue-dark grid items-center gap-8 bg-linear-[120deg] p-7 md:grid-cols-2 md:gap-14 md:p-[56px_60px]">
               <div>
                 <h2 className="h2 !text-white">{data.contactInfo.title}</h2>
-                <div className="text-on-blue prose-ds mt-4 !text-base [&_*]:!text-inherit">
-                  <p className="m-0">{data.contactInfo.content}</p>
-                </div>
+                {/* content — richtext в Strapi, поэтому HTML, а не текстом */}
+                <Html
+                  html={data.contactInfo.content}
+                  className="text-on-blue prose-ds mt-4 !text-base [&_*]:!text-inherit"
+                />
                 {data.contactInfo.append ? (
                   <p className="text-on-ink-faint mt-3 text-sm">{data.contactInfo.append}</p>
                 ) : null}
