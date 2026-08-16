@@ -5,6 +5,7 @@ import { Link } from '@/i18n/navigation';
 import { strapiLocale } from '@/i18n/routing';
 import { getCollection } from '@/lib/strapi';
 import { hasOption } from '@/lib/program';
+import { localeAlternates } from '@/lib/seo';
 import type { Program } from '@/types/strapi';
 import PageHero from '@/components/ui/PageHero';
 import CtaBand from '@/components/ui/CtaBand';
@@ -26,7 +27,11 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: 'pages.programs' });
-  return { title: t('title'), description: t('lead') };
+  return {
+    title: t('title'),
+    description: t('lead'),
+    alternates: localeAlternates(locale, '/program'),
+  };
 }
 
 export default async function ProgramListPage({ params }: { params: Promise<{ locale: string }> }) {

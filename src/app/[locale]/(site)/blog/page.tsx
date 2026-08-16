@@ -4,6 +4,7 @@ import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { Link } from '@/i18n/navigation';
 import { strapiLocale } from '@/i18n/routing';
 import { getCollection, mediaUrl } from '@/lib/strapi';
+import { localeAlternates } from '@/lib/seo';
 import type { Article } from '@/types/strapi';
 import PageHero from '@/components/ui/PageHero';
 
@@ -14,7 +15,11 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: 'pages.blog' });
-  return { title: t('title'), description: t('lead') };
+  return {
+    title: t('title'),
+    description: t('lead'),
+    alternates: localeAlternates(locale, '/blog'),
+  };
 }
 
 export default async function BlogListPage({ params }: { params: Promise<{ locale: string }> }) {
@@ -52,6 +57,8 @@ export default async function BlogListPage({ params }: { params: Promise<{ local
                   <img
                     src={mediaUrl(item.image, { width: 560, height: 360 }) ?? ''}
                     alt={item.title}
+                    width={560}
+                    height={360}
                     className="h-full w-full object-cover"
                     loading="lazy"
                   />

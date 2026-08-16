@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { strapiLocale } from '@/i18n/routing';
 import { getCollection } from '@/lib/strapi';
+import { localeAlternates } from '@/lib/seo';
 import type { Service } from '@/types/strapi';
 import Html from '@/components/Html';
 import PageHero from '@/components/ui/PageHero';
@@ -14,7 +15,11 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: 'pages.services' });
-  return { title: t('title'), description: t('lead') };
+  return {
+    title: t('title'),
+    description: t('lead'),
+    alternates: localeAlternates(locale, '/services'),
+  };
 }
 
 export default async function ServicesPage({ params }: { params: Promise<{ locale: string }> }) {

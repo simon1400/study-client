@@ -23,6 +23,21 @@ const nextConfig: NextConfig = {
   async headers() {
     return [
       {
+        // Базовая гигиена для всех ответов. HSTS сюда не кладём: заголовок про
+        // весь домен, его место в nginx на VPS — иначе он пропадёт, если Next
+        // однажды перестанет отдавать какой-то маршрут.
+        source: '/:path*',
+        headers: [
+          { key: 'X-Content-Type-Options', value: 'nosniff' },
+          { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
+          { key: 'X-Frame-Options', value: 'SAMEORIGIN' },
+          {
+            key: 'Permissions-Policy',
+            value: 'camera=(), microphone=(), geolocation=()',
+          },
+        ],
+      },
+      {
         // статика из public/ (герой главной, спрайты, логотипы, шрифты) отдаётся
         // Next с `max-age=0` — при каждом визите тянулись те же ~250 КБ.
         // Имена без хеша, поэтому не `immutable`: сутки в кеше плюс неделя

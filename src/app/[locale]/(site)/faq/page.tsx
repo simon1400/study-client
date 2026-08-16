@@ -3,8 +3,10 @@ import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { Link } from '@/i18n/navigation';
 import { strapiLocale } from '@/i18n/routing';
 import { getCollection } from '@/lib/strapi';
+import { localeAlternates } from '@/lib/seo';
 import type { FaqItem } from '@/types/strapi';
 import Html from '@/components/Html';
+import JsonLd from '@/components/JsonLd';
 import PageHero from '@/components/ui/PageHero';
 import AccordionList from '@/components/ui/AccordionList';
 
@@ -15,7 +17,11 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: 'pages.faq' });
-  return { title: t('title'), description: t('lead') };
+  return {
+    title: t('title'),
+    description: t('lead'),
+    alternates: localeAlternates(locale, '/faq'),
+  };
 }
 
 export default async function FaqPage({ params }: { params: Promise<{ locale: string }> }) {
@@ -27,8 +33,25 @@ export default async function FaqPage({ params }: { params: Promise<{ locale: st
     getTranslations({ locale }),
   ]);
 
+  // ответы уходят в разметку как есть, с HTML внутри — schema.org это допускает
+  const answered = items.filter((item) => item.question && item.answer);
+
   return (
     <div id="faq">
+      {answered.length ? (
+        <JsonLd
+          data={{
+            '@context': 'https://schema.org',
+            '@type': 'FAQPage',
+            inLanguage: locale,
+            mainEntity: answered.map((item) => ({
+              '@type': 'Question',
+              name: item.question,
+              acceptedAnswer: { '@type': 'Answer', text: item.answer },
+            })),
+          }}
+        />
+      ) : null}
       <PageHero eyebrow={t('pages.faq.eyebrow')} title={t('pages.faq.title')}>
         <p className="lead max-w-[600px]">
           {t('pages.faq.lead')}{' '}

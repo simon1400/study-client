@@ -5,6 +5,7 @@ import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { Link } from '@/i18n/navigation';
 import { strapiLocale } from '@/i18n/routing';
 import { getBySlug, getCollection, mediaUrl } from '@/lib/strapi';
+import { localeAlternates, localePath, ogBase, getSeoMeta, withSeoOverrides } from '@/lib/seo';
 import type { University } from '@/types/strapi';
 import Html from '@/components/Html';
 import Breadcrumbs from '@/components/ui/Breadcrumbs';
@@ -40,10 +41,25 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: { params: Promise<Params> }): Promise<Metadata> {
   const { locale, slug } = await params;
   const university = await getUniversity(locale, slug);
-  return {
-    title: university?.title ?? 'University',
-    description: university?.shortContent ?? undefined,
-  };
+  const path = `/university/${slug}`;
+  const cover = mediaUrl(university?.image, { width: 1200, height: 630 });
+
+  return withSeoOverrides(
+    {
+      title: university?.title ?? 'University',
+      description: university?.shortContent ?? undefined,
+      alternates: localeAlternates(locale, path),
+      openGraph: {
+        ...(await ogBase(locale)),
+        title: university?.title ?? undefined,
+        description: university?.shortContent ?? undefined,
+        url: localePath(locale, path),
+        // без своей картинки останется дефолтная обложка из корневого layout
+        images: cover ? [cover] : undefined,
+      },
+    },
+    await getSeoMeta('universities', { locale, slug })
+  );
 }
 
 export default async function UniversityPage({ params }: { params: Promise<Params> }) {
@@ -60,8 +76,11 @@ export default async function UniversityPage({ params }: { params: Promise<Param
       <section className="bg-mist pt-6 pb-9 md:pt-10 md:pb-14">
         <div className="container-page">
           <Breadcrumbs
+            locale={locale}
+            home={t('nav.home')}
             parent={{ href: '/university', title: t('pages.universities.title') }}
             current={university.city?.title}
+            currentPath={`/university/${slug}`}
           />
 
           <div className="grid items-center gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:gap-12">
@@ -72,7 +91,15 @@ export default async function UniversityPage({ params }: { params: Promise<Param
             </div>
             {hero ? (
               <div className="rounded-panel h-[220px] w-full overflow-hidden md:h-[320px]">
-                <img src={hero} alt={university.title} className="h-full w-full object-cover" />
+                {/* картинка первого экрана: приоритетная загрузка, без lazy */}
+                <img
+                  src={hero}
+                  alt={university.title}
+                  width={900}
+                  height={640}
+                  className="h-full w-full object-cover"
+                  fetchPriority="high"
+                />
               </div>
             ) : null}
           </div>

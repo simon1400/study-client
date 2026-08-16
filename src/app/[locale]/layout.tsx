@@ -6,6 +6,7 @@ import { setRequestLocale } from 'next-intl/server';
 import { routing, strapiLocale } from '@/i18n/routing';
 import { fontVariables } from '@/lib/fonts';
 import { getSingle } from '@/lib/strapi';
+import { OG_LOCALES } from '@/lib/seo';
 import type { Global } from '@/types/strapi';
 import YandexMetrika from '@/components/YandexMetrika';
 import SessionProvider from '@/components/auth/SessionProvider';
@@ -62,8 +63,12 @@ export async function generateMetadata({
     openGraph: {
       type: 'website',
       siteName: global?.title ?? undefined,
-      url: SITE_URL,
+      // og:url здесь не задаём: он унаследовался бы главной на каждую страницу.
+      // Детальные страницы ставят свой, остальным хватает canonical.
+      locale: OG_LOCALES[locale],
+      images: ['/og-cover.jpg'],
     },
+    twitter: { card: 'summary_large_image' },
   };
 }
 

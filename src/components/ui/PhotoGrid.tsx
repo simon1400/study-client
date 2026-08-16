@@ -19,19 +19,31 @@ export default function PhotoGrid({
 
   return (
     <div className="grid auto-rows-[130px] grid-cols-2 gap-3.5 md:auto-rows-[180px] md:grid-cols-4">
-      {list.map((image, index) => (
-        <div
-          key={image.id}
-          className={`rounded-card relative overflow-hidden ${index === 0 ? 'col-span-2 row-span-2' : ''}`}
-        >
-          <img
-            src={mediaUrl(image, { width: index === 0 ? 900 : 480 }) ?? ''}
-            alt={alt}
-            className="h-full w-full object-cover"
-            loading={index === 0 ? 'eager' : 'lazy'}
-          />
-        </div>
-      ))}
+      {list.map((image, index) => {
+        // кадрирование не трогаем — только ширину; высоту атрибута считаем по
+        // пропорциям оригинала, чтобы браузер знал размер до загрузки
+        const width = index === 0 ? 900 : 480;
+        const height =
+          image.width && image.height ? Math.round((width * image.height) / image.width) : undefined;
+
+        return (
+          <div
+            key={image.id}
+            className={`rounded-card relative overflow-hidden ${index === 0 ? 'col-span-2 row-span-2' : ''}`}
+          >
+            {/* первое фото — первый экран страницы, остальные догружаются лениво */}
+            <img
+              src={mediaUrl(image, { width }) ?? ''}
+              alt={alt}
+              width={width}
+              height={height}
+              className="h-full w-full object-cover"
+              loading={index === 0 ? 'eager' : 'lazy'}
+              fetchPriority={index === 0 ? 'high' : undefined}
+            />
+          </div>
+        );
+      })}
     </div>
   );
 }

@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 import { strapiLocale } from '@/i18n/routing';
 import { getSession } from '@/lib/account';
@@ -16,6 +17,13 @@ import CabinetNav from '@/components/user/CabinetNav';
  */
 /** ЛК у каждого свой — ни страницу, ни её кусок кешировать нельзя. */
 export const dynamic = 'force-dynamic';
+
+/**
+ * Кабинет из поиска закрыт целиком: robots.txt не даёт краулить, а этот заголовок —
+ * индексировать адрес, найденный по ссылке. Страницы ниже наследуют его, если
+ * не переопределяют `robots` сами.
+ */
+export const metadata: Metadata = { robots: { index: false, follow: false } };
 
 /** Инициалы для аватара: «Дмитрий Печунка» → «ДП». */
 function initialsOf(name: string | null, surname: string | null, email: string): string {

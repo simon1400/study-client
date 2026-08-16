@@ -4,6 +4,7 @@ import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { Link } from '@/i18n/navigation';
 import { strapiLocale } from '@/i18n/routing';
 import { getCollection, getSingle, mediaUrl } from '@/lib/strapi';
+import { getSeoMeta, localeAlternates, withSeoOverrides } from '@/lib/seo';
 import type { Global, HomeService, Homepage, MediaItem, Review } from '@/types/strapi';
 import Html from '@/components/Html';
 import CallForm from '@/components/home/CallForm';
@@ -56,12 +57,17 @@ export async function generateMetadata({
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
   const { locale } = await params;
-  const data = await getHomepage(locale);
-  return {
-    // на главной заголовок сайта не дублируем
-    title: { absolute: data?.title ?? 'Study in the Czech Republic' },
-    description: data?.description ?? undefined,
-  };
+  const [data, seo] = await Promise.all([getHomepage(locale), getSeoMeta('homepage', { locale })]);
+
+  return withSeoOverrides(
+    {
+      // на главной заголовок сайта не дублируем
+      title: { absolute: data?.title ?? 'Study in the Czech Republic' },
+      description: data?.description ?? undefined,
+      alternates: localeAlternates(locale, '/'),
+    },
+    seo
+  );
 }
 
 export default async function HomePage({ params }: { params: Promise<{ locale: string }> }) {
@@ -289,6 +295,8 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
                       <img
                         src={mediaUrl(review.photo, { width: 96, height: 96 })!}
                         alt={review.name}
+                        width={96}
+                        height={96}
                         className="h-12 w-12 shrink-0 rounded-full object-cover"
                         loading="lazy"
                       />

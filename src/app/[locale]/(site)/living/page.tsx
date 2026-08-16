@@ -4,6 +4,7 @@ import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { Link } from '@/i18n/navigation';
 import { strapiLocale } from '@/i18n/routing';
 import { getCollection, mediaUrl } from '@/lib/strapi';
+import { localeAlternates } from '@/lib/seo';
 import type { Living } from '@/types/strapi';
 import PageHero from '@/components/ui/PageHero';
 import CityFilterGrid from '@/components/ui/CityFilterGrid';
@@ -16,7 +17,11 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: 'pages.living' });
-  return { title: t('title'), description: t('lead') };
+  return {
+    title: t('title'),
+    description: t('lead'),
+    alternates: localeAlternates(locale, '/living'),
+  };
 }
 
 export default async function LivingListPage({ params }: { params: Promise<{ locale: string }> }) {
@@ -43,6 +48,8 @@ export default async function LivingListPage({ params }: { params: Promise<{ loc
           <img
             src={mediaUrl(item.image, { width: 640, height: 440 }) ?? ''}
             alt={item.title}
+            width={640}
+            height={440}
             className="h-full w-full object-cover"
             loading="lazy"
           />

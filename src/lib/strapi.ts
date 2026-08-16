@@ -93,6 +93,35 @@ export async function getCollection<T>(
   return fetchIn(FALLBACK_LOCALE);
 }
 
+/**
+ * Коллекция целиком, без потолка в 100 записей: крутим `pagination.page`, пока
+ * Strapi отдаёт полные страницы. Нужно карте сайта — `getCollection` молча режет
+ * хвост, и статьи сверх сотни в sitemap.xml не попадали бы.
+ */
+export async function getAllPages<T>(
+  plural: string,
+  { locale, query = {}, pageSize = 100 }: { locale: string; query?: StrapiQuery; pageSize?: number }
+): Promise<T[]> {
+  const all: T[] = [];
+
+  for (let page = 1; ; page += 1) {
+    const batch = await orMissing(async () => {
+      const { data } = await strapiFetch<T[]>(
+        plural,
+        { locale, sort: ['order:asc'], pagination: { page, pageSize }, ...query },
+        [plural]
+      );
+      return data ?? [];
+    }, [] as T[]);
+
+    all.push(...batch);
+    // защита от бесконечного цикла, если Strapi однажды перестанет уважать pagination
+    if (batch.length < pageSize || page > 50) break;
+  }
+
+  return all;
+}
+
 /** Одна запись коллекции по slug. `null`, если не нашлась. */
 export async function getBySlug<T>(
   plural: string,
@@ -134,6 +163,9 @@ export async function getSingle<T>(
  * Абсолютный URL картинки: ImageKit отдаёт полный, локальный провайдер — относительный.
  * width/height превращаются в трансформацию ImageKit (`tr=w-…,h-…`) — так же, как
  * старый сайт resize'ил через image-url Sanity.
+ *
+ * `f-auto,q-auto` ставим всегда, даже без размеров: ImageKit сам отдаст WebP/AVIF
+ * тем браузерам, что их понимают, и подберёт степень сжатия по содержимому.
  */
 export function mediaUrl(
   media: StrapiMedia | null | undefined,
@@ -142,11 +174,14 @@ export function mediaUrl(
   if (!media?.url) return null;
   const url = media.url.startsWith('http') ? media.url : `${STRAPI_PUBLIC_URL}${media.url}`;
 
+  if (!url.includes('ik.imagekit.io')) return url;
+
   const tr = [
     size?.width ? `w-${size.width}` : null,
     size?.height ? `h-${size.height}` : null,
+    'f-auto',
+    'q-auto',
   ].filter(Boolean);
 
-  if (!tr.length || !url.includes('ik.imagekit.io')) return url;
   return `${url}${url.includes('?') ? '&' : '?'}tr=${tr.join(',')}`;
 }

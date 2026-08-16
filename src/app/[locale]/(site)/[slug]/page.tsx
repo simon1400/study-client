@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { strapiLocale } from '@/i18n/routing';
 import { getBySlug, getCollection, mediaUrl } from '@/lib/strapi';
+import { getSeoMeta, localeAlternates, withSeoOverrides } from '@/lib/seo';
 import type { InfoPage } from '@/types/strapi';
 import Html from '@/components/Html';
 import PageHero from '@/components/ui/PageHero';
@@ -36,7 +37,15 @@ export async function generateMetadata({ params }: { params: Promise<Params> }):
   const { locale, slug } = await params;
   const page = await getPage(locale, slug);
   if (!page) return {};
-  return { title: page.title, description: page.lead ?? undefined };
+
+  return withSeoOverrides(
+    {
+      title: page.title,
+      description: page.lead ?? undefined,
+      alternates: localeAlternates(locale, `/${slug}`),
+    },
+    await getSeoMeta('pages', { locale, slug })
+  );
 }
 
 export default async function InfoPageRoute({ params }: { params: Promise<Params> }) {

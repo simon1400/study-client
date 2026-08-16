@@ -38,6 +38,17 @@ export interface ContactDetails {
   phone: string | null;
 }
 
+/**
+ * Компонент `shared.seo` — ручное переопределение мета-тегов страницы в админке.
+ * Пустые поля означают «взять из самой записи», поэтому всё необязательное.
+ */
+export interface SeoMeta {
+  metaTitle: string | null;
+  metaDescription: string | null;
+  ogImage: StrapiMedia | null;
+  noIndex: boolean | null;
+}
+
 export interface SocLinks {
   facebook: string | null;
   instagram: string | null;
@@ -152,6 +163,8 @@ export interface Homepage extends StrapiEntity {
   homepageSteps: HomeStep[];
   ourServices: HomeService[];
   contactInfo: HomeContactInfo | null;
+  /** приходит только когда его явно попросили populate (см. getSeoMeta) */
+  seo?: SeoMeta | null;
 }
 
 /** Отзыв студента или родителя — секция «Наши студенты уже в Чехии». */
@@ -186,6 +199,8 @@ export interface Article extends StrapiEntity {
   content: string | null;
   image: StrapiMedia | null;
   showOnBlog: boolean | null;
+  /** приходит только когда его явно попросили populate (см. getSeoMeta) */
+  seo?: SeoMeta | null;
 }
 
 export interface University extends StrapiEntity {
@@ -200,6 +215,8 @@ export interface University extends StrapiEntity {
   facultyImage: StrapiMedia | null;
   faculties: Faculty[];
   city: City | null;
+  /** приходит только когда его явно попросили populate (см. getSeoMeta) */
+  seo?: SeoMeta | null;
 }
 
 export interface Program extends StrapiEntity {
@@ -217,6 +234,8 @@ export interface Program extends StrapiEntity {
   notInclude: TextItem[];
   options: unknown;
   city: City | null;
+  /** приходит только когда его явно попросили populate (см. getSeoMeta) */
+  seo?: SeoMeta | null;
 }
 
 export interface Living extends StrapiEntity {
@@ -231,6 +250,8 @@ export interface Living extends StrapiEntity {
   image: StrapiMedia | null;
   galery: StrapiMedia[];
   city: City | null;
+  /** приходит только когда его явно попросили populate (см. getSeoMeta) */
+  seo?: SeoMeta | null;
 }
 
 export interface Partner extends StrapiEntity {
@@ -276,6 +297,8 @@ export interface InfoPage extends StrapiEntity {
   note: string | null;
   showInFooter: boolean | null;
   order: number | null;
+  /** приходит только когда его явно попросили populate (см. getSeoMeta) */
+  seo?: SeoMeta | null;
 }
 
 export interface ContactsPage extends StrapiEntity {

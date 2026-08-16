@@ -5,8 +5,10 @@ import { Link } from '@/i18n/navigation';
 import { strapiLocale } from '@/i18n/routing';
 import { getBySlug, getCollection } from '@/lib/strapi';
 import { hasOption } from '@/lib/program';
+import { absoluteUrl, localeAlternates, localePath, ogBase, ORGANIZATION_ID, getSeoMeta, withSeoOverrides } from '@/lib/seo';
 import type { Program } from '@/types/strapi';
 import Html from '@/components/Html';
+import JsonLd from '@/components/JsonLd';
 import Breadcrumbs from '@/components/ui/Breadcrumbs';
 import CtaBand from '@/components/ui/CtaBand';
 import FormCtaButton from '@/components/FormCtaButton';
@@ -41,10 +43,23 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: { params: Promise<Params> }): Promise<Metadata> {
   const { locale, slug } = await params;
   const program = await getProgram(locale, slug);
-  return {
-    title: program?.title ?? 'Programme',
-    description: program?.shortContent ?? undefined,
-  };
+  const path = `/program/${slug}`;
+
+  return withSeoOverrides(
+    {
+      title: program?.title ?? 'Programme',
+      description: program?.shortContent ?? undefined,
+      alternates: localeAlternates(locale, path),
+      // своей картинки у программы в CMS нет — обложка остаётся дефолтная
+      openGraph: {
+        ...(await ogBase(locale)),
+        title: program?.title ?? undefined,
+        description: program?.shortContent ?? undefined,
+        url: localePath(locale, path),
+      },
+    },
+    await getSeoMeta('programs', { locale, slug })
+  );
 }
 
 export default async function ProgramPage({ params }: { params: Promise<Params> }) {
@@ -68,11 +83,25 @@ export default async function ProgramPage({ params }: { params: Promise<Params> 
 
   return (
     <div id="program">
+      <JsonLd
+        data={{
+          '@context': 'https://schema.org',
+          '@type': 'Course',
+          name: program.title,
+          description: program.shortContent ?? undefined,
+          inLanguage: locale,
+          url: absoluteUrl(locale, `/program/${slug}`),
+          provider: { '@id': ORGANIZATION_ID },
+        }}
+      />
       <section className="bg-mist pt-6 pb-9 md:pt-10 md:pb-14">
         <div className="container-page">
           <Breadcrumbs
+            locale={locale}
+            home={t('nav.home')}
             parent={{ href: '/program', title: t('pages.programs.title') }}
             current={program.title}
+            currentPath={`/program/${slug}`}
           />
 
           <div className="grid items-start gap-8 lg:grid-cols-[1.15fr_0.85fr] lg:gap-12">

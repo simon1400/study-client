@@ -12,6 +12,10 @@ export const routing = defineRouting({
   locales: ['uk', 'ru', 'en'],
   defaultLocale: 'uk',
   localePrefix: 'as-needed',
+  // Каждый адрес всегда отдаёт свою локаль: без редиректов по cookie/Accept-Language
+  // ответ на URL один и тот же для краулера, кеша и человека по ссылке.
+  // Язык посетитель выбирает переключателем в шапке (решение 2026-08-16).
+  localeDetection: false,
 });
 
 export type Locale = (typeof routing.locales)[number];

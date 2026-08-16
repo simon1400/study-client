@@ -3,6 +3,7 @@ import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { strapiLocale } from '@/i18n/routing';
 import { getSingle, mediaUrl } from '@/lib/strapi';
+import { localeAlternates } from '@/lib/seo';
 import type { ContactsPage } from '@/types/strapi';
 import PageHero from '@/components/ui/PageHero';
 import MapSection from '@/components/home/MapSection';
@@ -17,7 +18,11 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: 'pages.contacts' });
-  return { title: t('title'), description: t('lead') };
+  return {
+    title: t('title'),
+    description: t('lead'),
+    alternates: localeAlternates(locale, '/contacts'),
+  };
 }
 
 export default async function ContactsPageRoute({ params }: { params: Promise<{ locale: string }> }) {
@@ -95,6 +100,8 @@ export default async function ContactsPageRoute({ params }: { params: Promise<{ 
                     <img
                       src={mediaUrl(person.image, { width: 200, height: 200 })!}
                       alt={person.name}
+                      width={200}
+                      height={200}
                       className="mb-3 h-24 w-24 rounded-full object-cover"
                       loading="lazy"
                     />
