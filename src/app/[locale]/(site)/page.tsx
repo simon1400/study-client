@@ -9,6 +9,11 @@ import Html from '@/components/Html';
 import CallForm from '@/components/home/CallForm';
 import MapSection from '@/components/home/MapSection';
 import FormCtaButton from '@/components/FormCtaButton';
+import MotionReveal from '@/components/MotionReveal';
+import CountUp from '@/components/CountUp';
+
+/** Задержка появления блока: ставится переменной, правила — в ds.css. */
+const delay = (ms: number) => ({ '--reveal-delay': `${ms}ms` }) as React.CSSProperties;
 
 /** Иконки услуг лежат в вёрстке, а не в CMS — порядок тот же, что и раньше. */
 const SERVICE_ICONS = [
@@ -79,15 +84,32 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
 
   return (
     <div id="homepage">
+      {/* появление блоков при прокрутке — размётка через data-reveal */}
+      <MotionReveal />
+
       {/* ------------------------------------------------------------ Hero */}
       <section className="bg-mist">
         <div className="container-page grid items-center gap-10 py-9 md:py-[72px] lg:grid-cols-[1.05fr_0.95fr] lg:gap-16 lg:pb-[88px]">
           <div>
-            {data.heroBadge ? <span className="badge badge-caps mb-5">{data.heroBadge}</span> : null}
-            <h1 className="h1 mb-4 md:mb-[22px]">{data.title}</h1>
-            {data.description ? <p className="lead mb-7 max-w-[480px] md:mb-[34px]">{data.description}</p> : null}
+            {data.heroBadge ? (
+              <span className="badge badge-caps mb-5" data-reveal>
+                {data.heroBadge}
+              </span>
+            ) : null}
+            <h1 className="h1 mb-4 md:mb-[22px]" data-reveal style={delay(60)}>
+              {data.title}
+            </h1>
+            {data.description ? (
+              <p className="lead mb-7 max-w-[480px] md:mb-[34px]" data-reveal style={delay(120)}>
+                {data.description}
+              </p>
+            ) : null}
 
-            <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:gap-3.5">
+            <div
+              className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:gap-3.5"
+              data-reveal
+              style={delay(180)}
+            >
               <Link href="/program" className="btn btn-primary btn-block sm:!inline-flex sm:!w-auto">
                 {t('cta.pickProgram')}
               </Link>
@@ -97,12 +119,17 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
             </div>
 
             {data.heroStats?.length ? (
-              <div className="mt-8 flex justify-between gap-4 rounded-2xl border border-line bg-white p-4 md:mt-10 md:justify-start md:gap-7 md:border-0 md:bg-transparent md:p-0">
+              <div
+                className="mt-8 flex justify-between gap-4 rounded-2xl border border-line bg-white p-4 md:mt-10 md:justify-start md:gap-7 md:border-0 md:bg-transparent md:p-0"
+                data-reveal
+                style={delay(240)}
+              >
                 {data.heroStats.map((stat, i) => (
                   <div key={stat.id} className="contents">
                     {i > 0 ? <div className="bg-line-strong w-px" /> : null}
                     <div className="text-center md:text-left">
-                      <div className="metric">{stat.value}</div>
+                      {/* tabular-nums — чтобы ширина не прыгала, пока цифра набегает */}
+                      <CountUp value={stat.value} className="metric block tabular-nums" delay={i * 120} />
                       <div className="text-muted text-xs md:text-sm">{stat.label}</div>
                     </div>
                   </div>
@@ -112,7 +139,11 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
           </div>
 
           <div className="relative">
-            <div className="rounded-panel relative h-[220px] w-full overflow-hidden md:h-[460px]">
+            <div
+              className="rounded-panel relative h-[220px] w-full overflow-hidden md:h-[460px]"
+              data-reveal="zoom"
+              style={delay(120)}
+            >
               <img
                 src="/slide.jpg"
                 alt={data.title}
@@ -129,7 +160,10 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
       {data.ourServices?.length ? (
         <section id="programs" className="section bg-white">
           <div className="container-page">
-            <div className="mb-8 flex flex-wrap items-end justify-between gap-6 md:mb-11 md:gap-8">
+            <div
+              className="mb-8 flex flex-wrap items-end justify-between gap-6 md:mb-11 md:gap-8"
+              data-reveal
+            >
               <div>
                 <div className="eyebrow">{t('home.programsEyebrow')}</div>
                 <h2 className="h2">{t('home.programsTitle')}</h2>
@@ -140,27 +174,43 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
             </div>
 
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 lg:gap-5">
-              {programCards(data.ourServices).map(({ item, index }) => {
+              {programCards(data.ourServices).map(({ item, index }, position) => {
                 const featured = Boolean(item.featured);
                 return (
-                  <div key={item.id} className={`${featured ? 'card-accent' : 'card'} flex flex-col`}>
-                    <div className={`icon-box icon-box-lg mb-5 ${featured ? 'icon-box-on-blue' : ''}`}>
-                      <img src={serviceIcon(index, featured)} alt="" className="w-[30px]" />
-                    </div>
-                    <h3 className={`h3 mb-2.5 ${featured ? '!text-white' : ''}`}>{item.title}</h3>
-                    <p className={`mb-5 flex-1 text-sm ${featured ? 'text-on-blue' : 'text-muted'}`}>{item.content}</p>
+                  <div
+                    key={item.id}
+                    className={`${featured ? 'card-accent' : 'card'} relative flex flex-col overflow-hidden`}
+                    data-reveal
+                    style={delay(position * 90)}
+                  >
+                    {/* единственная иконка карточки — крупно и вполсилы в углу,
+                        как номер шага в тёмной секции */}
+                    <img
+                      src={serviceIcon(index, featured)}
+                      alt=""
+                      aria-hidden="true"
+                      className={`pointer-events-none absolute -top-6 -right-7 w-[150px] md:-top-8 md:-right-9 md:w-[190px] ${
+                        featured ? 'opacity-[0.18]' : 'opacity-[0.08]'
+                      }`}
+                    />
+                    <h3 className={`h3 relative mb-2.5 ${featured ? '!text-white' : ''}`}>{item.title}</h3>
+                    <p className={`relative mb-5 flex-1 text-sm ${featured ? 'text-on-blue' : 'text-muted'}`}>
+                      {item.content}
+                    </p>
                     {item.price ? (
                       <>
-                        <div className={`text-[13px] ${featured ? 'text-on-blue' : 'text-muted'}`}>
+                        <div className={`relative text-[13px] ${featured ? 'text-on-blue' : 'text-muted'}`}>
                           {t('common.price')}
                         </div>
-                        <div className={`price mt-0.5 mb-4 ${featured ? '!text-yellow' : ''}`}>{item.price}</div>
+                        <div className={`price relative mt-0.5 mb-4 ${featured ? '!text-yellow' : ''}`}>
+                          {item.price}
+                        </div>
                       </>
                     ) : null}
                     {item.url ? (
                       <a
                         href={item.url}
-                        className={`btn btn-block ${featured ? 'btn-primary !text-sm' : 'btn-compact'}`}
+                        className={`btn btn-block relative ${featured ? 'btn-primary !text-sm' : 'btn-compact'}`}
                       >
                         {t('common.readMore')}
                       </a>
@@ -177,14 +227,19 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
       {data.homepageSteps?.length ? (
         <section id="steps" className="section bg-ink">
           <div className="container-page">
-            <div className="mb-8 md:mb-12">
+            <div className="mb-8 md:mb-12" data-reveal>
               <div className="eyebrow eyebrow-on-ink">{t('home.stepsEyebrow')}</div>
               <h2 className="h2 !text-white">{t('home.stepsTitle')}</h2>
             </div>
 
             <div className="grid gap-3 md:grid-cols-2 md:gap-5 lg:grid-cols-3">
               {data.homepageSteps.map((step, index) => (
-                <div key={step.id} className="card-ink card-ink-hover relative overflow-hidden transition-colors">
+                <div
+                  key={step.id}
+                  className="card-ink card-ink-hover relative overflow-hidden transition-colors"
+                  data-reveal
+                  style={delay(index * 80)}
+                >
                   <div
                     aria-hidden="true"
                     className="font-display pointer-events-none absolute -top-4 right-2.5 hidden text-[88px] leading-none font-bold text-white/6 md:block"
@@ -201,7 +256,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
               ))}
             </div>
 
-            <div className="mt-8 text-center md:mt-11">
+            <div className="mt-8 text-center md:mt-11" data-reveal>
               <FormCtaButton className="btn btn-primary btn-block md:!inline-flex md:!w-auto" />
             </div>
           </div>
@@ -212,16 +267,18 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
       {reviews.length ? (
         <section id="reviews" className="section bg-mist">
           <div className="container-page">
-            <div className="mb-8 md:mb-11">
+            <div className="mb-8 md:mb-11" data-reveal>
               <div className="eyebrow">{t('home.reviewsEyebrow')}</div>
               <h2 className="h2">{t('home.reviewsTitle')}</h2>
             </div>
 
             <div className="flex snap-x gap-3.5 overflow-x-auto pb-2 md:grid md:grid-cols-2 md:gap-5 md:overflow-visible md:pb-0 lg:grid-cols-3">
-              {reviews.map((review) => (
+              {reviews.map((review, index) => (
                 <div
                   key={review.id}
                   className="rounded-card flex min-w-[280px] snap-start flex-col gap-4 border border-line bg-white p-6 md:min-w-0 md:gap-[18px] md:p-7"
+                  data-reveal
+                  style={delay((index % 3) * 90)}
                 >
                   <div className="text-yellow tracking-[3px]" aria-label={`${review.rating ?? 5}/5`}>
                     {'★'.repeat(review.rating ?? 5)}
@@ -256,7 +313,10 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
       {media.length ? (
         <section id="media" className="section bg-white !pb-0">
           <div className="container-page">
-            <div className="mb-8 flex flex-wrap items-end justify-between gap-6 md:mb-11 md:gap-8">
+            <div
+              className="mb-8 flex flex-wrap items-end justify-between gap-6 md:mb-11 md:gap-8"
+              data-reveal
+            >
               <div>
                 <div className="eyebrow">{t('home.mediaEyebrow')}</div>
                 <h2 className="h2">{t('home.mediaTitle')}</h2>
@@ -270,7 +330,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
             </div>
 
             <div className="grid auto-rows-[140px] grid-cols-2 gap-3.5 md:auto-rows-[200px] md:grid-cols-4">
-              {media.map((item) => {
+              {media.map((item, index) => {
                 const src = mediaUrl(item.image, { width: 600 });
                 if (!src) return null;
                 const tile = (
@@ -291,12 +351,21 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
                   </>
                 );
                 const cls = `rounded-card relative overflow-hidden ${item.tall ? 'row-span-2' : ''}`;
+                const reveal = delay((index % 4) * 80);
                 return item.url ? (
-                  <a key={item.id} href={item.url} target="_blank" rel="noreferrer noopener" className={cls}>
+                  <a
+                    key={item.id}
+                    href={item.url}
+                    target="_blank"
+                    rel="noreferrer noopener"
+                    className={cls}
+                    data-reveal
+                    style={reveal}
+                  >
                     {tile}
                   </a>
                 ) : (
-                  <div key={item.id} className={cls}>
+                  <div key={item.id} className={cls} data-reveal style={reveal}>
                     {tile}
                   </div>
                 );
@@ -310,7 +379,10 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
       {data.contactInfo ? (
         <section id="call" className="section bg-white">
           <div className="container-page">
-            <div className="rounded-hero from-blue to-blue-dark grid items-center gap-8 bg-linear-[120deg] p-7 md:grid-cols-2 md:gap-14 md:p-[56px_60px]">
+            <div
+              className="rounded-hero from-blue to-blue-dark grid items-center gap-8 bg-linear-[120deg] p-7 md:grid-cols-2 md:gap-14 md:p-[56px_60px]"
+              data-reveal
+            >
               <div>
                 <h2 className="h2 !text-white">{data.contactInfo.title}</h2>
                 {/* content — richtext в Strapi, поэтому HTML, а не текстом */}
@@ -339,7 +411,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
       {/* --------------------------------------------------------- Контакты */}
       <section id="contacts" className="section bg-mist">
         <div className="container-page grid items-stretch gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:gap-10">
-          <div className="flex flex-col justify-center gap-5 md:gap-[22px]">
+          <div className="flex flex-col justify-center gap-5 md:gap-[22px]" data-reveal="left">
             <h2 className="h2">{t('home.contactsTitle')}</h2>
 
             <div className="flex flex-col gap-3.5 text-[15px]">
@@ -363,7 +435,10 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
             <SocialRow links={global?.socLinks ?? null} />
           </div>
 
-          <MapSection />
+          {/* обёртка нужна ради data-reveal; h-full сохраняет растяжку по колонке */}
+          <div data-reveal="right" style={delay(100)} className="h-full">
+            <MapSection className="h-full" />
+          </div>
         </div>
       </section>
     </div>
@@ -389,6 +464,11 @@ function HeroHighlights({ items }: { items: Homepage['heroHighlights'] }) {
         return (
           <div
             key={item.id}
+            // после появления плашки бесконечно и еле заметно дрейфуют:
+            // у каждой свой кадр и своя длительность, чтобы не ходили строем
+            data-reveal
+            data-float={index + 1}
+            style={delay(400 + index * 140)}
             className={`rounded-2xl p-3.5 md:absolute md:px-[18px] md:py-3.5 ${positions[index] ?? ''} ${
               dark ? 'bg-ink shadow-float-dark text-white' : 'shadow-float bg-white'
             }`}

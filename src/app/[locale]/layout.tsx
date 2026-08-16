@@ -25,6 +25,11 @@ const CONSENT_DEFAULT_JS = `window.dataLayer=window.dataLayer||[];function gtag(
 var g='denied';try{if(localStorage.getItem('agree_gdpr')==='true')g='granted'}catch(e){}
 gtag('consent','default',{ad_storage:g,ad_user_data:g,ad_personalization:g,analytics_storage:g});`;
 
+// Разрешаем анимации появления (ds.css прячет [data-reveal] только под этим флагом).
+// Инлайном первым в body — до отрисовки, чтобы блоки не мигнули до скрытия;
+// без JS флага нет и весь контент виден сразу.
+const MOTION_FLAG_JS = `document.documentElement.dataset.motion='on'`;
+
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
 }
@@ -76,6 +81,7 @@ export default async function LocaleLayout({
   return (
     <html lang={locale} className={fontVariables}>
       <body className="ds">
+        <script dangerouslySetInnerHTML={{ __html: MOTION_FLAG_JS }} />
         {/* Google Tag Manager и Яндекс.Метрика — те же счётчики, что в старом public/index.html */}
         <script dangerouslySetInnerHTML={{ __html: CONSENT_DEFAULT_JS }} />
         <GoogleTagManager gtmId={GTM_ID} />

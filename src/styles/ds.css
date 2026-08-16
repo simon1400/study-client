@@ -735,6 +735,72 @@
     }
   }
 
+  /* --- Движение ----------------------------------------------------------
+   * Два эффекта, оба выключены без JS и при prefers-reduced-motion:
+   *   data-reveal  — блок всплывает, когда попадает в поле зрения
+   *                  (класс is-in вешает компонент MotionReveal);
+   *   data-float   — после появления блок бесконечно и еле заметно дрейфует.
+   * Скрываем только под html[data-motion] — флаг ставит инлайн-скрипт в layout,
+   * так что без скриптов страница остаётся видимой.
+   * Задержка задаётся переменной --reveal-delay прямо в разметке.
+   */
+
+  html[data-motion] [data-reveal] {
+    opacity: 0;
+  }
+
+  html[data-motion] [data-reveal].is-in {
+    animation: ds-reveal-up 0.7s cubic-bezier(0.22, 0.61, 0.36, 1) var(--reveal-delay, 0ms) both;
+  }
+
+  html[data-motion] [data-reveal='left'].is-in {
+    animation-name: ds-reveal-left;
+  }
+
+  html[data-motion] [data-reveal='right'].is-in {
+    animation-name: ds-reveal-right;
+  }
+
+  html[data-motion] [data-reveal='zoom'].is-in {
+    animation-name: ds-reveal-zoom;
+  }
+
+  /* Появление и дрейф — две анимации одного свойства: вторая стартует ровно
+     тогда, когда первая закончилась, поэтому подмены кадра не видно.
+     У дрейфа тайминг linear: путь замкнутый и посчитан точками по эллипсу,
+     любое ease тормозило бы у каждого кадра — блок «подпрыгивал» бы.
+
+     Только от md: на мобильных плашки стоят в потоке колонкой, и размах в
+     20px увёл бы их за поля контейнера — появилась бы горизонтальная прокрутка. */
+  @media (min-width: 768px) {
+    html[data-motion] [data-reveal][data-float].is-in {
+      animation:
+        ds-reveal-up 0.7s cubic-bezier(0.22, 0.61, 0.36, 1) var(--reveal-delay, 0ms) both,
+        ds-float-1 var(--float-time, 16s) linear calc(var(--reveal-delay, 0ms) + 0.7s) infinite;
+      /* свой слой композитора: иначе на прозрачных тенях видно дрожание */
+      will-change: transform;
+    }
+
+    html[data-motion] [data-reveal][data-float='2'].is-in {
+      animation-name: ds-reveal-up, ds-float-2;
+      --float-time: 20s;
+    }
+
+    html[data-motion] [data-reveal][data-float='3'].is-in {
+      animation-name: ds-reveal-up, ds-float-3;
+      --float-time: 18s;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html[data-motion] [data-reveal],
+    html[data-motion] [data-reveal].is-in,
+    html[data-motion] [data-reveal][data-float].is-in {
+      opacity: 1;
+      animation: none;
+    }
+  }
+
   /* --- Текст из CMS (richtext Strapi) ------------------------------------ */
 
   .prose-ds {
@@ -856,5 +922,188 @@
   .prose-ds th {
     font-weight: 600;
     color: var(--color-ink);
+  }
+}
+
+/* ------------------------------------------------------------- 03 Кадры
+ * Держим вне слоёв: @keyframes каскадом не перекрываются, а ссылаться на них
+ * нужно и из components, и из утилит.
+ */
+
+@keyframes ds-reveal-up {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 20px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes ds-reveal-left {
+  from {
+    opacity: 0;
+    transform: translate3d(-24px, 0, 0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes ds-reveal-right {
+  from {
+    opacity: 0;
+    transform: translate3d(24px, 0, 0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes ds-reveal-zoom {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Дрейф — размах 18–20px по горизонтали и 9–13px по вертикали: движение видно,
+ * но плашка остаётся на своём месте в композиции.
+ *
+ * Путь — замкнутый эллипс, посчитанный по 12 точкам (шаг 30°), и проходит он
+ * через 0,0 — там анимация подхватывает блок после появления. Тайминг у этих
+ * кадров ЛИНЕЙНЫЙ (см. правило [data-float] в слое components): с ease-in-out
+ * блок тормозил бы у каждого ключевого кадра и казалось, что он подпрыгивает.
+ */
+@keyframes ds-float-1 {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  8.333% {
+    transform: translate3d(-1.2px, 6.5px, 0);
+  }
+  16.667% {
+    transform: translate3d(-4.5px, 11.3px, 0);
+  }
+  25% {
+    transform: translate3d(-9px, 13px, 0);
+  }
+  33.333% {
+    transform: translate3d(-13.5px, 11.3px, 0);
+  }
+  41.667% {
+    transform: translate3d(-16.8px, 6.5px, 0);
+  }
+  50% {
+    transform: translate3d(-18px, 0, 0);
+  }
+  58.333% {
+    transform: translate3d(-16.8px, -6.5px, 0);
+  }
+  66.667% {
+    transform: translate3d(-13.5px, -11.3px, 0);
+  }
+  75% {
+    transform: translate3d(-9px, -13px, 0);
+  }
+  83.333% {
+    transform: translate3d(-4.5px, -11.3px, 0);
+  }
+  91.667% {
+    transform: translate3d(-1.2px, -6.5px, 0);
+  }
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes ds-float-2 {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  8.333% {
+    transform: translate3d(1.1px, -5.5px, 0);
+  }
+  16.667% {
+    transform: translate3d(4px, -9.5px, 0);
+  }
+  25% {
+    transform: translate3d(8px, -11px, 0);
+  }
+  33.333% {
+    transform: translate3d(12px, -9.5px, 0);
+  }
+  41.667% {
+    transform: translate3d(14.9px, -5.5px, 0);
+  }
+  50% {
+    transform: translate3d(16px, 0, 0);
+  }
+  58.333% {
+    transform: translate3d(14.9px, 5.5px, 0);
+  }
+  66.667% {
+    transform: translate3d(12px, 9.5px, 0);
+  }
+  75% {
+    transform: translate3d(8px, 11px, 0);
+  }
+  83.333% {
+    transform: translate3d(4px, 9.5px, 0);
+  }
+  91.667% {
+    transform: translate3d(1.1px, 5.5px, 0);
+  }
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes ds-float-3 {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  8.333% {
+    transform: translate3d(-1.3px, -4.5px, 0);
+  }
+  16.667% {
+    transform: translate3d(-5px, -7.8px, 0);
+  }
+  25% {
+    transform: translate3d(-10px, -9px, 0);
+  }
+  33.333% {
+    transform: translate3d(-15px, -7.8px, 0);
+  }
+  41.667% {
+    transform: translate3d(-18.7px, -4.5px, 0);
+  }
+  50% {
+    transform: translate3d(-20px, 0, 0);
+  }
+  58.333% {
+    transform: translate3d(-18.7px, 4.5px, 0);
+  }
+  66.667% {
+    transform: translate3d(-15px, 7.8px, 0);
+  }
+  75% {
+    transform: translate3d(-10px, 9px, 0);
+  }
+  83.333% {
+    transform: translate3d(-5px, 7.8px, 0);
+  }
+  91.667% {
+    transform: translate3d(-1.3px, 4.5px, 0);
+  }
+  100% {
+    transform: translate3d(0, 0, 0);
   }
 }
