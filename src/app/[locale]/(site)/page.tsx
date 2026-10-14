@@ -12,6 +12,7 @@ import MapSection from '@/components/home/MapSection';
 import FormCtaButton from '@/components/FormCtaButton';
 import MotionReveal from '@/components/MotionReveal';
 import CountUp from '@/components/CountUp';
+import UnpaidNotice from '@/components/UnpaidNotice';
 
 /** Задержка появления блока: ставится переменной, правила — в ds.css. */
 const delay = (ms: number) => ({ '--reveal-delay': `${ms}ms` }) as React.CSSProperties;
@@ -92,6 +93,8 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
     <div id="homepage">
       {/* появление блоков при прокрутке — размётка через data-reveal */}
       <MotionReveal />
+      {/* ВРЕМЕННО: экран «сайт временно недоступен» при прокрутке, см. components/UnpaidNotice.tsx */}
+      <UnpaidNotice />
 
       {/* ------------------------------------------------------------ Hero */}
       <section className="bg-mist">
