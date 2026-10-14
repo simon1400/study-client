@@ -1,57 +1,24 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 
 /**
- * ВРЕМЕННО. Экран «сайт временно недоступен»: появляется при первой же попытке
- * прокрутить главную (скролл, колесо, свайп, клавиши) и закрывает контент
- * переливающимся полупрозрачным экраном. Снять — удалить этот файл и строку
- * `<UnpaidNotice />` в `app/[locale]/(site)/page.tsx`.
- *
- * До срабатывания в HTML ничего нет: первый экран и индексация не затронуты.
+ * ВРЕМЕННО. Экран «сайт временно недоступен»: рендерится сразу вместе со
+ * страницей (есть и в серверном HTML), плавно проявляется и закрывает контент
+ * переливающимся полупрозрачным экраном, прокрутка под ним заблокирована.
+ * Снять — удалить этот файл и строку `<UnpaidNotice />` в
+ * `app/[locale]/(site)/page.tsx`.
  */
-
-const SCROLL_THRESHOLD = 6;
-const SCROLL_KEYS = new Set(['ArrowDown', 'PageDown', 'End', ' ', 'Spacebar']);
-
 export default function UnpaidNotice() {
-  const [shown, setShown] = useState(false);
-
-  useEffect(() => {
-    const show = () => setShown(true);
-    const onScroll = () => {
-      if (window.scrollY > SCROLL_THRESHOLD) show();
-    };
-    const onKey = (event: KeyboardEvent) => {
-      if (SCROLL_KEYS.has(event.key)) show();
-    };
-
-    // страница могла открыться не с самого верха (перезагрузка, якорь)
-    onScroll();
-    window.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('wheel', show, { passive: true });
-    window.addEventListener('touchmove', show, { passive: true });
-    window.addEventListener('keydown', onKey);
-    return () => {
-      window.removeEventListener('scroll', onScroll);
-      window.removeEventListener('wheel', show);
-      window.removeEventListener('touchmove', show);
-      window.removeEventListener('keydown', onKey);
-    };
-  }, []);
-
   // пока экран показан, страницу под ним не прокрутить
   useEffect(() => {
-    if (!shown) return;
     const html = document.documentElement;
     const previous = html.style.overflow;
     html.style.overflow = 'hidden';
     return () => {
       html.style.overflow = previous;
     };
-  }, [shown]);
-
-  if (!shown) return null;
+  }, []);
 
   return (
     <div className="unpaid" role="dialog" aria-modal="true" aria-labelledby="unpaid-title">

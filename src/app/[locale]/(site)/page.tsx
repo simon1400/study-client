@@ -93,7 +93,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
     <div id="homepage">
       {/* появление блоков при прокрутке — размётка через data-reveal */}
       <MotionReveal />
-      {/* ВРЕМЕННО: экран «сайт временно недоступен» при прокрутке, см. components/UnpaidNotice.tsx */}
+      {/* ВРЕМЕННО: экран «сайт временно недоступен» поверх главной, см. components/UnpaidNotice.tsx */}
       <UnpaidNotice />
 
       {/* ------------------------------------------------------------ Hero */}
